@@ -85,6 +85,7 @@ private:
     
 
     void segmentation(std::vector<cv::Point2f> &_laser_pt, Leg_cluster &_leg_pt);
+    void catch_target(std::vector<Cluster> leg_target);
 
     void scan_CB(const sensor_msgs::LaserScan::ConstPtr &msg);
     void leg_CB(const leg_tracker::LegArrayConstPtr &leg);

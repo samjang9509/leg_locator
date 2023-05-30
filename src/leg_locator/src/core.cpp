@@ -136,8 +136,18 @@ void leg_locator::segmentation(std::vector<cv::Point2f> &_laser_pt, Leg_cluster 
 		}
 	}
 
-	grid.segGrid(final_clusters.body)
-	final_clusters.clear();
+	catch_target(final_clusters);
+}
+
+void leg_locator::catch_target(std::vector<Cluster> leg_target)
+{
+	std::vector<cv::Point2f> tmp_target;
+	int cluster_num = leg_target.size();
+
+	for(int i = 0; i < cluster_num; i++)
+	{
+		tmp_target.swap(leg_target)
+	}
 }
 
 void leg_locator::runloop()
