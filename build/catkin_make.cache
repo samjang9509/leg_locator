@@ -1,0 +1,2 @@
+leg_locator:leg_tracker
+-DCATKIN_DEVEL_PREFIX=/home/cona/leg_locator/devel -DCMAKE_INSTALL_PREFIX=/home/cona/leg_locator/install -G Unix Makefiles
