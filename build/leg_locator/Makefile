@@ -428,6 +428,33 @@ src/main.cpp.s:
 	cd /home/cona/leg_locator/build && $(MAKE) -f leg_locator/CMakeFiles/leg_locator_node.dir/build.make leg_locator/CMakeFiles/leg_locator_node.dir/src/main.cpp.s
 .PHONY : src/main.cpp.s
 
+src/motion.o: src/motion.cpp.o
+
+.PHONY : src/motion.o
+
+# target to build an object file
+src/motion.cpp.o:
+	cd /home/cona/leg_locator/build && $(MAKE) -f leg_locator/CMakeFiles/leg_locator_node.dir/build.make leg_locator/CMakeFiles/leg_locator_node.dir/src/motion.cpp.o
+.PHONY : src/motion.cpp.o
+
+src/motion.i: src/motion.cpp.i
+
+.PHONY : src/motion.i
+
+# target to preprocess a source file
+src/motion.cpp.i:
+	cd /home/cona/leg_locator/build && $(MAKE) -f leg_locator/CMakeFiles/leg_locator_node.dir/build.make leg_locator/CMakeFiles/leg_locator_node.dir/src/motion.cpp.i
+.PHONY : src/motion.cpp.i
+
+src/motion.s: src/motion.cpp.s
+
+.PHONY : src/motion.s
+
+# target to generate assembly for a file
+src/motion.cpp.s:
+	cd /home/cona/leg_locator/build && $(MAKE) -f leg_locator/CMakeFiles/leg_locator_node.dir/build.make leg_locator/CMakeFiles/leg_locator_node.dir/src/motion.cpp.s
+.PHONY : src/motion.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -462,6 +489,9 @@ help:
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"
+	@echo "... src/motion.o"
+	@echo "... src/motion.i"
+	@echo "... src/motion.s"
 .PHONY : help
 
 

@@ -4,6 +4,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/leg_locator_node.dir/src/Grid.cpp.o"
   "CMakeFiles/leg_locator_node.dir/src/core.cpp.o"
   "CMakeFiles/leg_locator_node.dir/src/main.cpp.o"
+  "CMakeFiles/leg_locator_node.dir/src/motion.cpp.o"
 )
 
 # Per-language clean rules from dependency scanning.

@@ -7,6 +7,7 @@ set(CMAKE_DEPENDS_CHECK_CXX
   "/home/cona/leg_locator/src/leg_locator/src/Grid.cpp" "/home/cona/leg_locator/build/leg_locator/CMakeFiles/leg_locator_node.dir/src/Grid.cpp.o"
   "/home/cona/leg_locator/src/leg_locator/src/core.cpp" "/home/cona/leg_locator/build/leg_locator/CMakeFiles/leg_locator_node.dir/src/core.cpp.o"
   "/home/cona/leg_locator/src/leg_locator/src/main.cpp" "/home/cona/leg_locator/build/leg_locator/CMakeFiles/leg_locator_node.dir/src/main.cpp.o"
+  "/home/cona/leg_locator/src/leg_locator/src/motion.cpp" "/home/cona/leg_locator/build/leg_locator/CMakeFiles/leg_locator_node.dir/src/motion.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 

@@ -1,4 +1,5 @@
 #include "leg_locator/Grid.hpp"
+#include "leg_locator/motion.hpp"
 
 class Cluster
 {
@@ -54,7 +55,8 @@ public:
     Cona_Odom odomCo;
     OdoManager odomPt;
     receiver s_receiver;
-    Grid_map grid;
+    Grid_map vizual;
+    motion_control Control;
 
     std::mutex l_mutex;
 
@@ -66,8 +68,10 @@ public:
     std::vector<std::thread> thread_list;
     std::vector<cv::Point2f> point_m;
 
-    Leg_cluster src_leg;
+    std::vector<cv::Point2f> src_leg;
     Leg_cluster dst_clusters;
+
+    std::vector<cv::Point2f> dst_points;
 
     std::vector<Cluster> final_clusters;
 
@@ -76,15 +80,18 @@ private:
     Cona_Odom tmp_target;
     Cona_Odom abs_target;
 
+    cv::Point2f final_target;
+
 	float m2mm = 1000.0f;
 
     Cona_Odom laser2Odom(cv::Point2f laser_pt, OdoManager &odomPoint);
     std::vector<cv::Point2f> initialize_scan();
-    Leg_cluster initialize_leg();
-    float euclidean_distance(cv::Point2f first, cv::Point2f second);
+    std::vector<cv::Point2f> initialize_leg();
+    float inline ed_btw_points(cv::Point2f first, cv::Point2f second);
+    float inline euclidean_distance(cv::Point2f target);
     
 
-    void segmentation(std::vector<cv::Point2f> &_laser_pt, Leg_cluster &_leg_pt);
+    void segmentation(std::vector<cv::Point2f> &_laser_pt, std::vector<cv::Point2f> &_leg_pt);
     void catch_target(std::vector<Cluster> leg_target);
 
     void scan_CB(const sensor_msgs::LaserScan::ConstPtr &msg);

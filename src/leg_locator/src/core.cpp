@@ -6,17 +6,16 @@ std::vector<cv::Point2f> leg_locator::initialize_scan()
 	return dst_v;
 }
 
-Leg_cluster leg_locator::initialize_leg()
+std::vector<cv::Point2f> leg_locator::initialize_leg()
 {
-	return dst_clusters;
+	return dst_points;
 }
 
 void leg_locator::scan_CB(const sensor_msgs::LaserScan::ConstPtr &msg)
 {
 	s_receiver.get_tf(msg->header.frame_id);
 
-	// getting laser data within the value size (where is size?)
-	int size = std::min((int)msg->ranges.size(), 1440); // TG = 2019, Sick
+	int size = std::min((int)msg->ranges.size(), 1440); 
 	float angle_min = msg->angle_min;
 	float angle_max = msg->angle_max;
 	float angle_increment = msg->angle_increment;
@@ -25,15 +24,15 @@ void leg_locator::scan_CB(const sensor_msgs::LaserScan::ConstPtr &msg)
 
 	for (int i = 0; i < size; i++)
 	{
-		float val = msg->ranges[i]; // ranges[i]?
+		float val = msg->ranges[i];
 		if (val <= range_min || val >= range_max || !std::isfinite(val) || val == 0.0)
 			continue;
-		float angle = angle_min + angle_increment * (float)i; // getting the angle for every point
-		float degree = angle * 180.0f / CV_PI;				  // change from rad to degree (not using)
-		float x = cos(angle) * val;							  // coordinate x
-		float y = sin(angle) * val;							  // coordinate y
+		float angle = angle_min + angle_increment * (float)i; 
+		float degree = angle * 180.0f / CV_PI;				  
+		float x = cos(angle) * val;							  
+		float y = sin(angle) * val;							  
 		tf::Vector3 p(x, y, 0);
-		tf::Vector3 reprj_p = s_receiver.R * p + s_receiver.T; // Rotation and Transformation
+		tf::Vector3 reprj_p = s_receiver.R * p + s_receiver.T;
 		cv::Point2f tmp_pt;
 		tmp_pt.x = 1000.0f * reprj_p.getX();
 		tmp_pt.y = 1000.0f * reprj_p.getY();
@@ -46,27 +45,42 @@ void leg_locator::scan_CB(const sensor_msgs::LaserScan::ConstPtr &msg)
 
 void leg_locator::leg_CB(const leg_tracker::LegArrayConstPtr &leg)
 {
-	std::cout << "WTF" << std::endl;
-	Leg_cluster tmp_target;
+	std::vector<cv::Point2f> tmp_dst;
 
 	leg_tracker::LegArray tmp_leg;
-
 	
 	tmp_leg.header = leg->header;
 	tmp_leg.legs = leg->legs;
 	
 	int leg_size = tmp_leg.legs.size();
-	
-	for(int i = 0; i < leg_size; i++)
+	if(leg_size == 0)
 	{
-		float confidence_level = tmp_leg.legs[i].confidence;
-		if(confidence_level > 0.5f)
-		{
-			tmp_target.target_leg.push_back(tmp_leg.legs[i]);
-			tmp_target.leg_header = tmp_leg.header;
-		}
+		ROS_INFO("No Leg");
 	}
+	else
+	{
+		tmp_dst.resize(tmp_leg.legs.size());
 
+		for (int i = 0; i < leg_size; i++)
+		{
+			float confidence_level = tmp_leg.legs[i].confidence;
+			if (confidence_level > 0.5f)
+			{
+				tmp_dst[i].x = tmp_leg.legs[i].position.x;
+				tmp_dst[i].y = tmp_leg.legs[i].position.y;
+			}
+		}
+		int size = tmp_dst.size();
+		if (size == 0)
+		{
+			std::cout << "Searching for leg input" << std::endl;
+		}
+		else
+		{
+			dst_points.swap(tmp_dst);
+		}
+		tmp_dst.clear();
+	}
 }
 
 void leg_locator::laserscan_topic_parser()
@@ -97,57 +111,101 @@ Cona_Odom leg_locator::laser2Odom(cv::Point2f laser_pt, OdoManager &odomPoint)
 	return tmp_target;
 }
 
-float leg_locator::euclidean_distance(cv::Point2f first, cv::Point2f second)
+float inline leg_locator::ed_btw_points(cv::Point2f first, cv::Point2f second)
 {
-	float output;
-
-	output = std::sqrt(pow(first.x - second.x,2) + pow(first.y - second.y,2));
-
-	return output;
+	return std::sqrt(pow(first.x - second.x,2) + pow(first.y - second.y,2));
 }
 
-
-void leg_locator::segmentation(std::vector<cv::Point2f> &_laser_pt, Leg_cluster &_leg_pt)
+float inline leg_locator::euclidean_distance(cv::Point2f target)
 {
-	Cluster l_cluster;
-	Group cluster_group;
+	return std::sqrt(pow(target.x,2) + pow(target.y,2));
+}
+
+void leg_locator::segmentation(std::vector<cv::Point2f> &_laser_pt, std::vector<cv::Point2f> &_leg_pt)
+{
 	std::vector<cv::Point2f> tmp_laser;
-	std::deque<leg_tracker::Leg> tmp_leg;
+	std::vector<cv::Point2f> tmp_leg;
 	
-	_laser_pt.swap(tmp_laser);
-	_leg_pt.target_leg.swap(tmp_leg);
-	int v_size = tmp_laser.size();
-
-	int leg_size = tmp_leg.size();
-
-	for(int j = 0; j < leg_size; j++)
+	if(_laser_pt.empty() || _leg_pt.empty())
 	{
-		cv::Point2f tmp_target;
-		tmp_target.x = tmp_leg[j].position.x * m2mm;
-		tmp_target.y = tmp_leg[j].position.y * m2mm;
+		ROS_INFO("no input");
+	}
+	else
+	{
+		l_mutex.lock();
+		_laser_pt.swap(tmp_laser);
+		_leg_pt.swap(tmp_leg);
+		l_mutex.unlock();
 
-		for(int k = 0; k < v_size; k++)
+		int v_size = tmp_laser.size();
+		int leg_size = tmp_leg.size();
+
+		std::cout << "v_size : " << v_size << std::endl;
+		std::cout << "leg_siz : " << leg_size << std::endl;
+
+		for (int j = 0; j < leg_size; j++)
 		{
-			float distance = euclidean_distance(tmp_target, tmp_laser[k]);
-			if(distance < 30.0f)
+			cv::Point2f tmp_target;
+			tmp_target.x = tmp_leg[j].x * m2mm;
+			tmp_target.y = tmp_leg[j].y * m2mm;
+
+			for (int k = 0; k < v_size; k++)
 			{
-				final_clusters[k].body.push_back(tmp_laser[k]);
+				std::cout << tmp_target << std::endl;
+				std::cout << tmp_laser[k] << std::endl;
+				float distance = ed_btw_points(tmp_target, tmp_laser[k]);
+				final_clusters.resize(v_size);
+				if (distance < 30.0f)
+				{
+					final_clusters[k].body.push_back(tmp_laser[k]);
+				}
 			}
 		}
-	}
 
-	catch_target(final_clusters);
+		std::cout << "final_cluste size = " << final_clusters.size() << std::endl;
+		catch_target(final_clusters);
+		final_clusters.clear();
+	}
 }
 
 void leg_locator::catch_target(std::vector<Cluster> leg_target)
 {
-	std::vector<cv::Point2f> tmp_target;
+	std::vector<cv::Point2f> grid;
 	int cluster_num = leg_target.size();
+	cv::Point2f zero(0.0f,0.0f);
+	float min_distance = 0.0f;
 
 	for(int i = 0; i < cluster_num; i++)
 	{
-		tmp_target.swap(leg_target)
+		cv::Point2f target_mean = std::accumulate(leg_target[i].body.begin(), leg_target[i].body.end(),zero);
+		
+		target_mean.x = target_mean.x / cluster_num;
+		target_mean.y = target_mean.y / cluster_num;
+
+		int laser_data_num = leg_target[i].body.size();
+		for(int j = 0; j < laser_data_num; j++)
+		{
+			grid.push_back(leg_target[i].body[j]);
+			
+			float distance2target = euclidean_distance(target_mean);
+			if(min_distance == 0.0f)
+			{
+				min_distance = distance2target;
+				final_target = target_mean;
+			}
+			else if(min_distance > distance2target)
+			{
+				min_distance = distance2target;
+				final_target = target_mean;
+			}
+			else if(min_distance < distance2target)
+			{
+				continue;
+			}
+		}
 	}
+	Control.move2target(final_target);
+	vizual.segGrid(grid);	
 }
 
 void leg_locator::runloop()

@@ -1,3 +1,6 @@
+#ifndef Receiver
+#define Receiver
+
 #include "leg_locator/systems.hpp"
 
 class receiver
@@ -65,3 +68,5 @@ public:
 
     }	
 };
+
+#endif
