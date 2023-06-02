@@ -14,4 +14,5 @@
 #include <mutex>
 #include "std_msgs/Bool.h"
 #include "std_msgs/String.h"
-#include "leg_tracker/LegArray.h"
+// #include "leg_tracker/LegArray.h"
+#include "leg_tracker/PersonArray.h"

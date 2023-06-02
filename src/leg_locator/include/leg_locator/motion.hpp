@@ -23,7 +23,7 @@ public:
     void move2target(cv::Point2f p_target);
     // void param_callback();
 
-    motion_control() : max_lin_vel(0.5), min_lin_vel(0.1), safe_distance(0.0008f), min_ang_vel(0.05), max_ang_vel(0.2)
+    motion_control() : max_lin_vel(0.7), min_lin_vel(0.3), safe_distance(0.0008f), min_ang_vel(0.05), max_ang_vel(0.2)
     {
         // param_callback();
         this->init_Publisher();

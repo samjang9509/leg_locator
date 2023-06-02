@@ -11,7 +11,7 @@ class Grid_map
 private:
 	ros::NodeHandle nh_;
 	cv::Point2f robot;
-	std::vector<cv::Point2f> points_vector;
+	std::vector<std::pair<int,cv::Point2f>> points_vector;
 
 public:
 	std::string this_name;
@@ -33,7 +33,7 @@ public:
 
 	bool vizualizer;
 
-    void segGrid(std::vector<cv::Point2f> &grid);
+    void segGrid(std::vector<std::pair<int,cv::Point2f>>  &grid);
 	// float euclidean_distance(cv::Point2f check_distance, cv::Point2f origin);
 	float euclidean_distance(cv::Point2f check_distance);
 

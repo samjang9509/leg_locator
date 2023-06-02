@@ -6,7 +6,7 @@ std::vector<cv::Point2f> leg_locator::initialize_scan()
 	return dst_v;
 }
 
-std::vector<cv::Point2f> leg_locator::initialize_leg()
+std::vector<std::pair<int, cv::Point2f>> leg_locator::initialize_leg()
 {
 	return dst_points;
 }
@@ -43,32 +43,35 @@ void leg_locator::scan_CB(const sensor_msgs::LaserScan::ConstPtr &msg)
 	point_m.clear();
 }
 
-void leg_locator::leg_CB(const leg_tracker::LegArrayConstPtr &leg)
+void leg_locator::leg_CB(const leg_tracker::PersonArrayConstPtr &leg)
 {
-	std::vector<cv::Point2f> tmp_dst;
+	std::vector<std::pair<int, cv::Point2f>> tmp_dst;
 
-	leg_tracker::LegArray tmp_leg;
 
-	tmp_leg.header = leg->header;
-	tmp_leg.legs = leg->legs;
+	leg_tracker::PersonArray tmp_person;
 
-	int leg_size = tmp_leg.legs.size();
-	if (leg_size == 0)
+	tmp_person.header = leg->header;
+	tmp_person.people = leg->people;
+
+	int person_size = tmp_person.people.size();
+	if (person_size == 0)
 	{
 		ROS_INFO("No Leg");
 	}
 	else
 	{
-		tmp_dst.resize(tmp_leg.legs.size());
+		tmp_dst.resize(person_size);
 
-		for (int i = 0; i < leg_size; i++)
+		for (int i = 0; i < person_size; i++)
 		{
-			float confidence_level = tmp_leg.legs[i].confidence;
-			if (confidence_level > 0.4f)
-			{
-				tmp_dst[i].x = tmp_leg.legs[i].position.x;
-				tmp_dst[i].y = tmp_leg.legs[i].position.y;
-			}
+			
+				tmp_dst[i].second.x = tmp_person.people[i].pose.position.x;
+				tmp_dst[i].second.y = tmp_person.people[i].pose.position.y;
+				tmp_dst[i].first = tmp_person.people[i].id;
+				// std::cout << "z : " << tmp_person.people[i].id << std::endl;
+				// std::cout << "frame_id : " << tmp_person.header.frame_id << std::endl;
+				// std::cout << "seq : " << tmp_person.header.seq << std::endl;
+				// std::cout << "stamp : " << tmp_person.header.stamp << std::endl;
 		}
 		int size = tmp_dst.size();
 		if (size == 0)
@@ -95,7 +98,7 @@ void leg_locator::odom_subscriber()
 
 void leg_locator::leg_subscriber()
 {
-	leg_sub = nh.subscribe<leg_tracker::LegArray>("detected_leg_clusters", 1, &leg_locator::leg_CB, this);
+	leg_sub = nh.subscribe<leg_tracker::PersonArray>("people_tracked", 1, &leg_locator::leg_CB, this);
 }
 
 Cona_Odom leg_locator::laser2Odom(cv::Point2f laser_pt, OdoManager &odomPoint)
@@ -121,10 +124,10 @@ float inline leg_locator::euclidean_distance(cv::Point2f target)
 	return std::sqrt(pow(target.x, 2) + pow(target.y, 2));
 }
 
-void leg_locator::segmentation(std::vector<cv::Point2f> &_laser_pt, std::vector<cv::Point2f> &_leg_pt)
+void leg_locator::segmentation(std::vector<cv::Point2f> &_laser_pt, std::vector<std::pair<int, cv::Point2f>> &_leg_pt)
 {
 	std::vector<cv::Point2f> tmp_laser;
-	std::vector<cv::Point2f> tmp_leg;
+	std::vector<std::pair<int, cv::Point2f>> tmp_person;
 
 	if (_laser_pt.empty() || _leg_pt.empty())
 	{
@@ -134,51 +137,73 @@ void leg_locator::segmentation(std::vector<cv::Point2f> &_laser_pt, std::vector<
 	{
 		l_mutex.lock();
 		_laser_pt.swap(tmp_laser);
-		_leg_pt.swap(tmp_leg);
+		_leg_pt.swap(tmp_person);
 		l_mutex.unlock();
 
 		int v_size = tmp_laser.size();
-		int leg_size = tmp_leg.size();
+		int leg_size = tmp_person.size();
+		final_clusters.resize(leg_size);
 
 		for (int j = 0; j < leg_size; j++)
 		{
+
 			cv::Point2f tmp_target;
-			tmp_target.x = tmp_leg[j].x * m2mm;
-			tmp_target.y = tmp_leg[j].y * m2mm;
+			tmp_target.x = tmp_person[j].second.x * m2mm;
+			tmp_target.y = tmp_person[j].second.y * m2mm;
+			final_clusters[j].label = tmp_person[j].first;
 
 			for (int k = 0; k < v_size; k++)
 			{
+
 				float distance = ed_btw_points(tmp_target, tmp_laser[k]);
-				final_clusters.resize(v_size);
-				if (distance < 30.0f)
+
+				std::cout << distance << std::endl;
+
+				if (distance < 3000.0f)
 				{
-					final_clusters[k].body.push_back(tmp_laser[k]);
+					std::cout << "WTF 8" << std::endl;
+
+
+					final_clusters[j].body.push_back(tmp_laser[k]);
 				}
 			}
 		}
-		catch_target(final_clusters);
-		final_clusters.clear();
+		if(final_clusters.size() == 0)
+		{
+			std::cout << "something is wrong" << std::endl;
+		}
+		else
+		{
+			catch_target(final_clusters);
+			final_clusters.clear();
+		}
 	}
 }
 
 void leg_locator::catch_target(std::vector<Cluster> leg_target)
-{
-	std::vector<cv::Point2f> grid;
+{	std::pair<int,cv::Point2f> tmp_grid;
+	std::vector<std::pair<int,cv::Point2f>> grid;
 	int cluster_num = leg_target.size();
 	cv::Point2f zero(0.0f, 0.0f);
 	float min_distance = 0.0f;
 
+	cv::Point2f target_mean;
+
 	for (int i = 0; i < cluster_num; i++)
 	{
-		cv::Point2f target_mean = std::accumulate(leg_target[i].body.begin(), leg_target[i].body.end(), zero);
+		cv::Point2f target_sum = std::accumulate(leg_target[i].body.begin(), leg_target[i].body.end(), zero);
 
-		target_mean.x = target_mean.x / cluster_num;
-		target_mean.y = target_mean.y / cluster_num;
+		target_mean.x = target_sum.x / cluster_num;
+		target_mean.y = target_sum.y / cluster_num;
 
 		int laser_data_num = leg_target[i].body.size();
+		grid.resize(laser_data_num*cluster_num);
 		for (int j = 0; j < laser_data_num; j++)
 		{
-			grid.push_back(leg_target[i].body[j]);
+			tmp_grid.second = leg_target[i].body[j];
+			tmp_grid.first = leg_target[i].label;
+
+			grid.push_back(tmp_grid);
 
 			float distance2target = euclidean_distance(target_mean);
 			if (min_distance == 0.0f)
@@ -198,10 +223,11 @@ void leg_locator::catch_target(std::vector<Cluster> leg_target)
 		}
 	}
 
-	std::cout << "final target coordinate : " << final_target << std::endl; 
+	// std::cout << "final target coordinate : " << final_target << std::endl; 
 
 	Control.move2target(final_target);
 	vizual.segGrid(grid);
+	grid.clear();
 }
 
 void leg_locator::runloop()
@@ -212,9 +238,9 @@ void leg_locator::runloop()
         ros::Rate hz(20);
         while(ros::ok()){
             src_laser = std::move(initialize_scan());
-			src_leg = std::move(initialize_leg());
+			src_person = std::move(initialize_leg());
 		
-				segmentation(src_laser, src_leg);
+				segmentation(src_laser, src_person);
 
             cv::waitKey(1);
             ros::spinOnce();

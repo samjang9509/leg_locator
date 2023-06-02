@@ -32,7 +32,7 @@ public:
 class Leg_cluster
 {
     public:
-    std::deque<leg_tracker::Leg> target_leg;
+    // std::deque<leg_tracker::Leg> target_leg;
     std_msgs::Header leg_header;
 
     Leg_cluster()
@@ -68,10 +68,9 @@ public:
     std::vector<std::thread> thread_list;
     std::vector<cv::Point2f> point_m;
 
-    std::vector<cv::Point2f> src_leg;
-    Leg_cluster dst_clusters;
+    std::vector<std::pair<int, cv::Point2f>> src_person;
 
-    std::vector<cv::Point2f> dst_points;
+    std::vector<std::pair<int, cv::Point2f>> dst_points;
 
     std::vector<Cluster> final_clusters;
 
@@ -84,18 +83,19 @@ private:
 
 	float m2mm = 1000.0f;
 
+
     Cona_Odom laser2Odom(cv::Point2f laser_pt, OdoManager &odomPoint);
     std::vector<cv::Point2f> initialize_scan();
-    std::vector<cv::Point2f> initialize_leg();
+    std::vector<std::pair<int, cv::Point2f>> initialize_leg();
     float inline ed_btw_points(cv::Point2f first, cv::Point2f second);
     float inline euclidean_distance(cv::Point2f target);
     
 
-    void segmentation(std::vector<cv::Point2f> &_laser_pt, std::vector<cv::Point2f> &_leg_pt);
+    void segmentation(std::vector<cv::Point2f> &_laser_pt, std::vector<std::pair<int, cv::Point2f>> &_leg_pt);
     void catch_target(std::vector<Cluster> leg_target);
 
     void scan_CB(const sensor_msgs::LaserScan::ConstPtr &msg);
-    void leg_CB(const leg_tracker::LegArrayConstPtr &leg);
+    void leg_CB(const leg_tracker::PersonArrayConstPtr &leg);
 
     void laserscan_topic_parser();
     void runloop();
