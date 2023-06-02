@@ -27,7 +27,8 @@ void motion_control::move2target(cv::Point2f p_target)
     float distance = ed_meter(target);
     try
     {
-        if (distance <= safe_distance)
+        std::cout << "distance to target = " << distance << std::endl;
+        if (distance < safe_distance)
         {
             vel_pub.linear.x = 0.0;
             vel_pub.linear.y = 0.0;

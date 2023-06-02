@@ -34,7 +34,8 @@ public:
 	bool vizualizer;
 
     void segGrid(std::vector<cv::Point2f> &grid);
-	float euclidean_distance(cv::Point2f check_distance, cv::Point2f origin);
+	// float euclidean_distance(cv::Point2f check_distance, cv::Point2f origin);
+	float euclidean_distance(cv::Point2f check_distance);
 
     cv::Point2f pt2Grid(float x_co, float y_co);
 public:

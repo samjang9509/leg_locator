@@ -19,38 +19,40 @@ void Grid_map::segGrid(std::vector<cv::Point2f> &grid)
 
 		points_vector.resize(point_size);
 		
+		points_vector = grid;
 		for(int i = 0; i < point_size; i++)
 		{
 			cv::Point2f points;
-			points.x = (grid[i].x * mm2pixel) + grid_robot_col;
-			points.y = (grid[i].y * mm2pixel) + grid_robot_row;
+			points.x = (-grid[i].y * mm2pixel) + grid_robot_col;
+			points.y = (-grid[i].x * mm2pixel) + grid_robot_row;
 			cv::circle(seg_grid, points, 2, cv::Scalar(0,0,0), -1);
 
-			points_vector.push_back(points);
-
-			float distance = euclidean_distance(points, robot);
-			if(min_distance == 0.0f)
-			{
-				min_distance = distance;
-				target = points;
-			}
-			else if(min_distance > distance)
-			{
-				min_distance = distance;
-				target = points;
-			}
-			else
-			{
-				continue;
-			}
+			// float distance = euclidean_distance(points, robot);
+			// if(min_distance == 0.0f)
+			// {
+			// 	min_distance = distance;
+			// 	target = points;
+			// }
+			// else if(min_distance > distance)
+			// {
+			// 	min_distance = distance;
+			// 	target = points;
+			// }
+			// else
+			// {
+			// 	continue;
+			// }
 		}
-		// std::cout << points_vector.size() << std::endl;
 
 		std::sort(points_vector.begin(), points_vector.end(), [&](cv::Point2f a, cv::Point2f b)
-				  { return euclidean_distance(a, robot) < euclidean_distance(b, robot); });
-
+				  { return euclidean_distance(a) < euclidean_distance(b); });
 		
-		cv::circle(seg_grid, points_vector[0], 30, cv::Scalar(0,0,255), 2);
+		cv::Point2f grid_target;
+
+		grid_target.x = (-points_vector[0].y * mm2pixel) + grid_robot_col;
+		grid_target.y = (-points_vector[0].x * mm2pixel) + grid_robot_row;
+		
+		cv::circle(seg_grid, grid_target, 30, cv::Scalar(0,0,255), 2);
 		// cv::circle(seg_grid, target, 30, cv::Scalar(0,0,255), 2);
 		
 		cv::imshow("leg_detector", seg_grid);
@@ -58,14 +60,24 @@ void Grid_map::segGrid(std::vector<cv::Point2f> &grid)
 	points_vector.clear();
 }
 
-float Grid_map::euclidean_distance(cv::Point2f check_distance, cv::Point2f origin)
+// float Grid_map::euclidean_distance(cv::Point2f check_distance, cv::Point2f origin)
+// {
+// 	float output;
+
+// 	output = std::sqrt(pow((check_distance.x - origin.x),2) + pow((check_distance.y - origin.y),2));
+
+// 	return output;
+// }
+
+float Grid_map::euclidean_distance(cv::Point2f check_distance)
 {
 	float output;
 
-	output = std::sqrt(pow((check_distance.x - origin.x),2) + pow((check_distance.y - origin.y),2));
+	output = std::sqrt(pow((check_distance.x),2) + pow((check_distance.y),2));
 
 	return output;
 }
+
 cv::Point2f Grid_map::pt2Grid(float x_co, float y_co)
 {
 	float grid_x = grid_robot_row - y_co * mm2pixel;

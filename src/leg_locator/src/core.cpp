@@ -64,7 +64,7 @@ void leg_locator::leg_CB(const leg_tracker::LegArrayConstPtr &leg)
 		for (int i = 0; i < leg_size; i++)
 		{
 			float confidence_level = tmp_leg.legs[i].confidence;
-			if (confidence_level > 0.5f)
+			if (confidence_level > 0.4f)
 			{
 				tmp_dst[i].x = tmp_leg.legs[i].position.x;
 				tmp_dst[i].y = tmp_leg.legs[i].position.y;
@@ -197,6 +197,9 @@ void leg_locator::catch_target(std::vector<Cluster> leg_target)
 			}
 		}
 	}
+
+	std::cout << "final target coordinate : " << final_target << std::endl; 
+
 	Control.move2target(final_target);
 	vizual.segGrid(grid);
 }

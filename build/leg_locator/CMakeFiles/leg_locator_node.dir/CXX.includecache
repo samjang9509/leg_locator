@@ -56,6 +56,20 @@ leg_locator/OdomManager.hpp
 leg_locator/systems.hpp
 /home/cona/leg_locator/src/leg_locator/include/leg_locator/leg_locator/systems.hpp
 
+/home/cona/leg_locator/src/leg_locator/include/leg_locator/core.hpp
+leg_locator/Grid.hpp
+/home/cona/leg_locator/src/leg_locator/include/leg_locator/leg_locator/Grid.hpp
+leg_locator/motion.hpp
+/home/cona/leg_locator/src/leg_locator/include/leg_locator/leg_locator/motion.hpp
+
+/home/cona/leg_locator/src/leg_locator/include/leg_locator/motion.hpp
+leg_locator/systems.hpp
+/home/cona/leg_locator/src/leg_locator/include/leg_locator/leg_locator/systems.hpp
+leg_locator/receiver.hpp
+/home/cona/leg_locator/src/leg_locator/include/leg_locator/leg_locator/receiver.hpp
+leg_locator/OdomManager.hpp
+/home/cona/leg_locator/src/leg_locator/include/leg_locator/leg_locator/OdomManager.hpp
+
 /home/cona/leg_locator/src/leg_locator/include/leg_locator/receiver.hpp
 leg_locator/systems.hpp
 /home/cona/leg_locator/src/leg_locator/include/leg_locator/leg_locator/systems.hpp
@@ -94,9 +108,9 @@ std_msgs/String.h
 leg_tracker/LegArray.h
 /home/cona/leg_locator/src/leg_locator/include/leg_locator/leg_tracker/LegArray.h
 
-/home/cona/leg_locator/src/leg_locator/src/Grid.cpp
-leg_locator/Grid.hpp
-/home/cona/leg_locator/src/leg_locator/src/leg_locator/Grid.hpp
+/home/cona/leg_locator/src/leg_locator/src/core.cpp
+leg_locator/core.hpp
+/home/cona/leg_locator/src/leg_locator/src/leg_locator/core.hpp
 
 /opt/ros/noetic/include/geometry_msgs/Point.h
 string
