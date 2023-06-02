@@ -16,6 +16,8 @@ void Grid_map::segGrid(std::vector<cv::Point2f> &grid)
 		int point_size = grid.size();
 		float min_distance = 0.0f;
 		cv::Point2f target;
+
+		points_vector.resize(point_size);
 		
 		for(int i = 0; i < point_size; i++)
 		{
@@ -23,6 +25,9 @@ void Grid_map::segGrid(std::vector<cv::Point2f> &grid)
 			points.x = (grid[i].x * mm2pixel) + grid_robot_col;
 			points.y = (grid[i].y * mm2pixel) + grid_robot_row;
 			cv::circle(seg_grid, points, 2, cv::Scalar(0,0,0), -1);
+
+			points_vector.push_back(points);
+
 			float distance = euclidean_distance(points, robot);
 			if(min_distance == 0.0f)
 			{
@@ -39,10 +44,18 @@ void Grid_map::segGrid(std::vector<cv::Point2f> &grid)
 				continue;
 			}
 		}
-		cv::circle(seg_grid, target, 15, cv::Scalar(0,0,255), 2);
+		// std::cout << points_vector.size() << std::endl;
+
+		std::sort(points_vector.begin(), points_vector.end(), [&](cv::Point2f a, cv::Point2f b)
+				  { return euclidean_distance(a, robot) < euclidean_distance(b, robot); });
+
+		
+		cv::circle(seg_grid, points_vector[0], 30, cv::Scalar(0,0,255), 2);
+		// cv::circle(seg_grid, target, 30, cv::Scalar(0,0,255), 2);
 		
 		cv::imshow("leg_detector", seg_grid);
 	}
+	points_vector.clear();
 }
 
 float Grid_map::euclidean_distance(cv::Point2f check_distance, cv::Point2f origin)

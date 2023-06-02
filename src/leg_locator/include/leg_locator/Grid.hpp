@@ -11,6 +11,8 @@ class Grid_map
 private:
 	ros::NodeHandle nh_;
 	cv::Point2f robot;
+	std::vector<cv::Point2f> points_vector;
+
 public:
 	std::string this_name;
 	cv::Mat Grid;
