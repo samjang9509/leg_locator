@@ -15,20 +15,6 @@ public:
 	}
 };
 
-class Group
-{
-public:
-	std::vector<Cluster> grouping;
-	int groupSize;
-
-	Group() : groupSize(0)
-	{
-	}
-	~Group()
-	{
-	}
-};
-
 class Leg_cluster
 {
     public:
@@ -69,7 +55,6 @@ public:
     std::vector<cv::Point2f> point_m;
 
     std::vector<std::pair<int, cv::Point2f>> src_person;
-
     std::vector<std::pair<int, cv::Point2f>> dst_points;
 
     std::vector<Cluster> final_clusters;
@@ -95,7 +80,7 @@ private:
     void catch_target(std::vector<Cluster> leg_target);
 
     void scan_CB(const sensor_msgs::LaserScan::ConstPtr &msg);
-    void leg_CB(const leg_tracker::PersonArrayConstPtr &leg);
+    void leg_CB(const leg_tracker::PersonArray::ConstPtr &person);
 
     void laserscan_topic_parser();
     void runloop();

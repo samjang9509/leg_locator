@@ -23,24 +23,28 @@ void Grid_map::segGrid(std::vector<std::pair<int, cv::Point2f>> &grid)
 		for (int i = 0; i < point_size; i++)
 		{
 			cv::Point2f points;
-			points.x = (-grid[i].second.y * mm2pixel) + grid_robot_col;
-			points.y = (-grid[i].second.x * mm2pixel) + grid_robot_row;
+			points.x = -(grid[i].second.y * mm2pixel) + grid_robot_col;
+			points.y = -(grid[i].second.x * mm2pixel) + grid_robot_row;
 			cv::circle(seg_grid, points, 2, cv::Scalar(0, 0, 0), -1);
-
+			// std::cout << i << " : " << points_vector[i].second << std::endl;
 		}
 
 		std::sort(points_vector.begin(), points_vector.end(), [&](std::pair<int, cv::Point2f> a, std::pair<int, cv::Point2f> b)
 				  { return euclidean_distance(a.second) < euclidean_distance(b.second); });
 
+
 		cv::Point2f grid_target;
 
-		grid_target.x = (-points_vector[0].second.y * mm2pixel) + grid_robot_col;
-		grid_target.y = (-points_vector[0].second.x * mm2pixel) + grid_robot_row;
+		grid_target.x = -(points_vector[0].second.y * mm2pixel) + grid_robot_row;
+		grid_target.y = -(points_vector[0].second.x * mm2pixel) + grid_robot_col;
 
 		std::stringstream ss;
 		ss << points_vector[0].first;
+		// std::cout << "id : " << points_vector[0].first;
+		// std::cout << ss.str() << std::endl;
 		cv::String id = ss.str();
-		cv::putText(seg_grid, id, grid_target, 1, 15, cv::Scalar(0, 0, 255), 1);
+		
+		cv::putText(seg_grid, id, grid_target, 1, 3, cv::Scalar(0, 0, 255), 3);
 		cv::circle(seg_grid, grid_target, 30, cv::Scalar(0, 0, 255), 2);
 		// cv::circle(seg_grid, target, 30, cv::Scalar(0,0,255), 2);
 
@@ -58,13 +62,9 @@ void Grid_map::segGrid(std::vector<std::pair<int, cv::Point2f>> &grid)
 // 	return output;
 // }
 
-float Grid_map::euclidean_distance(cv::Point2f check_distance)
+float inline Grid_map::euclidean_distance(cv::Point2f check_distance)
 {
-	float output;
-
-	output = std::sqrt(pow((check_distance.x), 2) + pow((check_distance.y), 2));
-
-	return output;
+	return std::sqrt(pow((check_distance.x), 2) + pow((check_distance.y), 2));
 }
 
 cv::Point2f Grid_map::pt2Grid(float x_co, float y_co)
@@ -72,6 +72,6 @@ cv::Point2f Grid_map::pt2Grid(float x_co, float y_co)
 	float grid_x = grid_robot_row - y_co * mm2pixel;
 	float grid_y = grid_robot_col - x_co * mm2pixel;
 
-	cv::Point2f coordinate(grid_x, grid_y);
-	return coordinate;
+	cv::Point2f output(grid_x, grid_y);
+	return output;
 }
