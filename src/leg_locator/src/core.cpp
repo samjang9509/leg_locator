@@ -183,7 +183,7 @@ void leg_locator::catch_target(std::vector<Cluster> leg_target)
 				tmp_grid.second = leg_target[i].body[j];
 				tmp_grid.first = leg_target[i].label;
 
-				std::cout << "tmp_grid id : "<< tmp_grid.first << std::endl;
+				// std::cout << "tmp_grid id : "<< tmp_grid.first << std::endl;
 
 				grid.push_back(tmp_grid);
 

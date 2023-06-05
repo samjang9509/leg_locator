@@ -47,25 +47,25 @@ void motion_control::move2target(cv::Point2f p_target)
             {
                 vel_pub.linear.x = std::min(-(double)target.x / 1.5, -min_lin_vel);
                 vel_pub.linear.y = std::min(-(double)target.y / 1.5, -min_lin_vel);
-                vel_pub.angular.z = std::min(angle/1.3, -min_ang_vel);
+                vel_pub.angular.z = std::max(angle/1.3, -min_ang_vel);
             }
             else if(angle < 0 && target.x > 0)
             {
-                vel_pub.linear.x = std::max((double)target.x / 1.5, min_lin_vel);
-                vel_pub.linear.y = std::min(-(double)target.y / 1.5, -min_lin_vel);
-                vel_pub.angular.z = std::min(angle/1.3, -min_ang_vel);
+                vel_pub.linear.x = std::min((double)target.x / 1.5, min_lin_vel);
+                vel_pub.linear.y = std::max(-(double)target.y / 1.5, -min_lin_vel);
+                vel_pub.angular.z = std::max(angle/1.3, -min_ang_vel);
             }
             else if(angle > 0 && target.x < 0)
             {
-                vel_pub.linear.x = std::min(-(double)target.x / 1.5, -min_lin_vel);
-                vel_pub.linear.y = std::max((double)target.y / 1.5, min_lin_vel);
-                vel_pub.angular.z = std::max(angle/1.3, min_ang_vel);
+                vel_pub.linear.x = std::max(-(double)target.x / 1.5, -min_lin_vel);
+                vel_pub.linear.y = std::min((double)target.y / 1.5, min_lin_vel);
+                vel_pub.angular.z = std::min(angle/1.3, min_ang_vel);
             }
             else if(angle > 0 && target.x > 0)
             {
-                vel_pub.linear.x = std::max((double)target.x / 1.5, min_lin_vel);
-                vel_pub.linear.y = std::max((double)target.y / 1.5, min_lin_vel);
-                vel_pub.angular.z = std::max(angle/1.3, min_ang_vel);
+                vel_pub.linear.x = std::min((double)target.x / 1.5, min_lin_vel);
+                vel_pub.linear.y = std::min((double)target.y / 1.5, min_lin_vel);
+                vel_pub.angular.z = std::min(angle/1.3, min_ang_vel);
             }
         }
     }
