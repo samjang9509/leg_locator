@@ -17,7 +17,10 @@ void Grid_map::segGrid(std::vector<std::pair<int, cv::Point2f>> &grid)
 		float min_distance = 0.0f;
 		cv::Point2f target;
 
+
+
 		points_vector.resize(point_size);
+		
 
 		points_vector = grid;
 		for (int i = 0; i < point_size; i++)
@@ -26,28 +29,57 @@ void Grid_map::segGrid(std::vector<std::pair<int, cv::Point2f>> &grid)
 			points.x = -(grid[i].second.y * mm2pixel) + grid_robot_col;
 			points.y = -(grid[i].second.x * mm2pixel) + grid_robot_row;
 			cv::circle(seg_grid, points, 2, cv::Scalar(0, 0, 0), -1);
-			// std::cout << i << " : " << points_vector[i].second << std::endl;
 		}
 
-		std::sort(points_vector.begin(), points_vector.end(), [&](std::pair<int, cv::Point2f> a, std::pair<int, cv::Point2f> b)
-				  { return euclidean_distance(a.second) < euclidean_distance(b.second); });
+		// std::sort(points_vector.begin(), points_vector.end(), [&](std::pair<int, cv::Point2f> a, std::pair<int, cv::Point2f> b)
+		// 		  { return euclidean_distance(a.second) < euclidean_distance(b.second); });
 
+		std::sort(points_vector.begin(), points_vector.end(), [&](std::pair<int, cv::Point2f> a, std::pair<int, cv::Point2f> b)
+				  { return a.first < b.first; });
 
 		cv::Point2f grid_target;
+		int check_id;
+		check_id = points_vector[0].first;
 
-		grid_target.x = -(points_vector[0].second.y * mm2pixel) + grid_robot_row;
-		grid_target.y = -(points_vector[0].second.x * mm2pixel) + grid_robot_col;
 
-		std::stringstream ss;
-		ss << points_vector[0].first;
-		// std::cout << "id : " << points_vector[0].first;
-		// std::cout << ss.str() << std::endl;
-		cv::String id = ss.str();
-		
-		cv::putText(seg_grid, id, grid_target, 1, 3, cv::Scalar(0, 0, 255), 3);
-		cv::circle(seg_grid, grid_target, 30, cv::Scalar(0, 0, 255), 2);
-		// cv::circle(seg_grid, target, 30, cv::Scalar(0,0,255), 2);
+		cv::Point2f tmp_grid_target(0.0f,0.0f);
+		int num_points = 0;
+		for (int j = 0; j < point_size; j++)
+		{
+			if(check_id == points_vector[j].first)
+			{
+				tmp_grid_target.x = tmp_grid_target.x + points_vector[j].second.x;
+				tmp_grid_target.y = tmp_grid_target.y + points_vector[j].second.y;
+				num_points++;
+			}
+			else if(check_id != points_vector[j].first)
+			{
+				grid_target.x = -((tmp_grid_target.y/num_points) * mm2pixel) + grid_robot_row;
+				grid_target.y = -((tmp_grid_target.x/num_points) * mm2pixel) + grid_robot_col;
 
+				num_points = 0;
+				tmp_grid_target = cv::Point2f(0.0f,0.0f);
+				
+				std::stringstream ss;
+				ss << check_id;
+				cv::String id = ss.str();
+				
+				if(target_caught == true)
+				{
+					cv::putText(seg_grid, id, grid_target, 1, 3, cv::Scalar(0, 0, 255), 3);
+					cv::circle(seg_grid, grid_target, 30, cv::Scalar(0, 0, 255), 2);
+					check_id = points_vector[j].first;
+					target_caught = false;
+				}
+				else 
+				{
+					cv::putText(seg_grid, id, grid_target, 1, 3, cv::Scalar(255, 0, 0), 3);
+					cv::circle(seg_grid, grid_target, 30, cv::Scalar(255, 0, 0), 2);
+					check_id = points_vector[j].first;
+				}
+			}
+		}
+		target_caught = true;
 		cv::imshow("leg_detector", seg_grid);
 	}
 	points_vector.clear();

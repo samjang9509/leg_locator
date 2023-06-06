@@ -13,6 +13,7 @@ private:
 	cv::Point2f robot;
 	std::vector<std::pair<int,cv::Point2f>> points_vector;
 
+    bool target_caught;
 public:
 	std::string this_name;
 	cv::Mat Grid;
@@ -39,7 +40,7 @@ public:
 
     cv::Point2f pt2Grid(float x_co, float y_co);
 public:
-	Grid_map() : this_name("Grid_map"), vizualizer(true), robot(grid_robot_row,grid_robot_col)
+	Grid_map() : this_name("Grid_map"), vizualizer(true), robot(grid_robot_row,grid_robot_col), target_caught(true)
 	{
 		Grid = cv::Mat(grid_row, grid_col, CV_8UC3, cv::Scalar(0, 0, 0));
 		occup = cv::Mat(grid_row, grid_col, CV_8UC3, cv::Scalar(0, 0, 0));

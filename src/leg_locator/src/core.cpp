@@ -182,14 +182,8 @@ void leg_locator::catch_target(std::vector<Cluster> leg_target)
 			{
 				tmp_grid.second = leg_target[i].body[j];
 				tmp_grid.first = leg_target[i].label;
-
-				// std::cout << "tmp_grid id : "<< tmp_grid.first << std::endl;
-
+				
 				grid.push_back(tmp_grid);
-
-				// std::cout << "grid id : " << grid[j].first << std::endl;
-				// printf("vector size : %d \n", (int)grid.size());
-				// printf("last index : %d \n", grid.back().first);
 
 				float distance2target = euclidean_distance(target_mean);
 				if (min_distance == 0.0f)

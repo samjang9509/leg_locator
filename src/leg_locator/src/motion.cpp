@@ -14,7 +14,21 @@ float motion_control::ed_meter(cv::Point2f d_target)
     return output;
 }
 
-void motion_control::move2target(cv::Point2f p_target)
+double motion_control::velocity(float distance)
+{
+    double output;
+
+    double tmp_x;
+
+    tmp_x = (pow((double)distance - 0.3, 2)) / 5;
+
+    output = std::exp(tmp_x) / (5 * std::sqrt(2 * M_PI));
+
+    return output;
+}
+
+
+void motion_control::move2target(cv::Point2f p_target) 
 {
     geometry_msgs::Twist vel_pub;
 
@@ -45,26 +59,26 @@ void motion_control::move2target(cv::Point2f p_target)
         {
             if (angle < 0 && target.x < 0)
             {
-                vel_pub.linear.x = std::min(-(double)target.x / 1.5, -min_lin_vel);
-                vel_pub.linear.y = std::min(-(double)target.y / 1.5, -min_lin_vel);
+                vel_pub.linear.x = std::max(-velocity(target.x), -min_lin_vel);
+                vel_pub.linear.y = std::max(-velocity(target.y), -min_lin_vel);
                 vel_pub.angular.z = std::max(angle/1.3, -min_ang_vel);
             }
             else if(angle < 0 && target.x > 0)
             {
-                vel_pub.linear.x = std::min((double)target.x / 1.5, min_lin_vel);
-                vel_pub.linear.y = std::max(-(double)target.y / 1.5, -min_lin_vel);
+                vel_pub.linear.x = std::min(velocity(target.x), min_lin_vel);
+                vel_pub.linear.y = std::max(-velocity(target.y), -min_lin_vel);
                 vel_pub.angular.z = std::max(angle/1.3, -min_ang_vel);
             }
             else if(angle > 0 && target.x < 0)
             {
-                vel_pub.linear.x = std::max(-(double)target.x / 1.5, -min_lin_vel);
-                vel_pub.linear.y = std::min((double)target.y / 1.5, min_lin_vel);
+                vel_pub.linear.x = std::max(-velocity(target.x), -min_lin_vel);
+                vel_pub.linear.y = std::min(velocity(target.y), min_lin_vel);
                 vel_pub.angular.z = std::min(angle/1.3, min_ang_vel);
             }
             else if(angle > 0 && target.x > 0)
             {
-                vel_pub.linear.x = std::min((double)target.x / 1.5, min_lin_vel);
-                vel_pub.linear.y = std::min((double)target.y / 1.5, min_lin_vel);
+                vel_pub.linear.x = std::min(velocity(target.x), min_lin_vel);
+                vel_pub.linear.y = std::min(velocity(target.y), min_lin_vel);
                 vel_pub.angular.z = std::min(angle/1.3, min_ang_vel);
             }
         }
@@ -86,6 +100,5 @@ void motion_control::move2target(cv::Point2f p_target)
     {
         std::cout << "Other Exception : Motion" << std::endl;
     }
-
     cmd_pub.publish(vel_pub);
 }
