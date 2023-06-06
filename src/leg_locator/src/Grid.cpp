@@ -16,8 +16,7 @@ void Grid_map::segGrid(std::vector<std::pair<int, cv::Point2f>> &grid)
 		int point_size = grid.size();
 		float min_distance = 0.0f;
 		cv::Point2f target;
-
-
+		int target_id;
 
 		points_vector.resize(point_size);
 		
@@ -31,9 +30,11 @@ void Grid_map::segGrid(std::vector<std::pair<int, cv::Point2f>> &grid)
 			cv::circle(seg_grid, points, 2, cv::Scalar(0, 0, 0), -1);
 		}
 
-		// std::sort(points_vector.begin(), points_vector.end(), [&](std::pair<int, cv::Point2f> a, std::pair<int, cv::Point2f> b)
-		// 		  { return euclidean_distance(a.second) < euclidean_distance(b.second); });
+		std::sort(points_vector.begin(), points_vector.end(), [&](std::pair<int, cv::Point2f> a, std::pair<int, cv::Point2f> b)
+				  { return euclidean_distance(a.second) < euclidean_distance(b.second); });
 
+		target_id = points_vector[0].first;
+		
 		std::sort(points_vector.begin(), points_vector.end(), [&](std::pair<int, cv::Point2f> a, std::pair<int, cv::Point2f> b)
 				  { return a.first < b.first; });
 
@@ -52,7 +53,7 @@ void Grid_map::segGrid(std::vector<std::pair<int, cv::Point2f>> &grid)
 				tmp_grid_target.y = tmp_grid_target.y + points_vector[j].second.y;
 				num_points++;
 			}
-			else if(check_id != points_vector[j].first)
+			else
 			{
 				grid_target.x = -((tmp_grid_target.y/num_points) * mm2pixel) + grid_robot_row;
 				grid_target.y = -((tmp_grid_target.x/num_points) * mm2pixel) + grid_robot_col;
@@ -64,7 +65,7 @@ void Grid_map::segGrid(std::vector<std::pair<int, cv::Point2f>> &grid)
 				ss << check_id;
 				cv::String id = ss.str();
 				
-				if(target_caught == true)
+				if(check_id == target_id)
 				{
 					cv::putText(seg_grid, id, grid_target, 1, 3, cv::Scalar(0, 0, 255), 3);
 					cv::circle(seg_grid, grid_target, 30, cv::Scalar(0, 0, 255), 2);
@@ -79,7 +80,7 @@ void Grid_map::segGrid(std::vector<std::pair<int, cv::Point2f>> &grid)
 				}
 			}
 		}
-		target_caught = true;
+
 		cv::imshow("leg_detector", seg_grid);
 	}
 	points_vector.clear();
