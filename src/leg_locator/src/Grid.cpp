@@ -70,7 +70,6 @@ void Grid_map::segGrid(std::vector<std::pair<int, cv::Point2f>> &grid)
 					cv::putText(seg_grid, id, grid_target, 1, 3, cv::Scalar(0, 0, 255), 3);
 					cv::circle(seg_grid, grid_target, 30, cv::Scalar(0, 0, 255), 2);
 					check_id = points_vector[j].first;
-					target_caught = false;
 				}
 				else 
 				{
