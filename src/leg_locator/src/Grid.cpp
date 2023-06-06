@@ -30,14 +30,6 @@ void Grid_map::segGrid(std::vector<std::pair<int, cv::Point2f>> &grid)
 			cv::circle(seg_grid, points, 2, cv::Scalar(0, 0, 0), -1);
 		}
 
-		std::sort(points_vector.begin(), points_vector.end(), [&](std::pair<int, cv::Point2f> a, std::pair<int, cv::Point2f> b)
-				  { return euclidean_distance(a.second) < euclidean_distance(b.second); });
-
-		target_id = points_vector[0].first;
-		
-		std::sort(points_vector.begin(), points_vector.end(), [&](std::pair<int, cv::Point2f> a, std::pair<int, cv::Point2f> b)
-				  { return a.first < b.first; });
-
 		cv::Point2f grid_target;
 		int check_id;
 		check_id = points_vector[0].first;
@@ -45,6 +37,15 @@ void Grid_map::segGrid(std::vector<std::pair<int, cv::Point2f>> &grid)
 
 		cv::Point2f tmp_grid_target(0.0f,0.0f);
 		int num_points = 0;
+
+		std::sort(points_vector.begin(), points_vector.end(), [&](std::pair<int, cv::Point2f> a, std::pair<int, cv::Point2f> b)
+				  { return euclidean_distance(a.second) < euclidean_distance(b.second); });
+
+		target_id = points_vector[0].first;
+
+		std::sort(points_vector.begin(), points_vector.end(), [&](std::pair<int, cv::Point2f> a, std::pair<int, cv::Point2f> b)
+				  { return a.first < b.first; });
+
 		for (int j = 0; j < point_size; j++)
 		{
 			if(check_id == points_vector[j].first)
@@ -69,14 +70,13 @@ void Grid_map::segGrid(std::vector<std::pair<int, cv::Point2f>> &grid)
 				{
 					cv::putText(seg_grid, id, grid_target, 1, 3, cv::Scalar(0, 0, 255), 3);
 					cv::circle(seg_grid, grid_target, 30, cv::Scalar(0, 0, 255), 2);
-					check_id = points_vector[j].first;
 				}
 				else 
 				{
 					cv::putText(seg_grid, id, grid_target, 1, 3, cv::Scalar(255, 0, 0), 3);
 					cv::circle(seg_grid, grid_target, 30, cv::Scalar(255, 0, 0), 2);
-					check_id = points_vector[j].first;
 				}
+				check_id = points_vector[j].first;
 			}
 		}
 
