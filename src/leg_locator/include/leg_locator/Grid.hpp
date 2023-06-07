@@ -13,6 +13,7 @@ private:
 	cv::Point2f robot;
 	std::vector<std::pair<int,cv::Point2f>> points_vector;
 	
+
 public:
 	std::string this_name;
 	cv::Mat Grid;
@@ -24,6 +25,8 @@ public:
 	Cona_Odom tmp_target;
 	Cona_Odom abs_target;
 
+	int grid_id;
+
 	float grid_robot_col = 500.0f;
 	float grid_robot_row = 500.0f;
 	float mm2pixel = 100.0f / 1000.0f;
@@ -33,13 +36,13 @@ public:
 
 	bool vizualizer;
 
-    void segGrid(std::vector<std::pair<int,cv::Point2f>>  &grid);
+    void segGrid(std::vector<cv::Point2f> &_laser_pt, std::vector<std::pair<int,cv::Point2f>>  &grid);
 	// float euclidean_distance(cv::Point2f check_distance, cv::Point2f origin);
 	float inline euclidean_distance(cv::Point2f check_distance);
 
     cv::Point2f pt2Grid(float x_co, float y_co);
 public:
-	Grid_map() : this_name("Grid_map"), vizualizer(true), robot(grid_robot_row,grid_robot_col)
+	Grid_map() : this_name("Grid_map"), vizualizer(true), robot(grid_robot_row, grid_robot_col)
 	{
 		Grid = cv::Mat(grid_row, grid_col, CV_8UC3, cv::Scalar(0, 0, 0));
 		occup = cv::Mat(grid_row, grid_col, CV_8UC3, cv::Scalar(0, 0, 0));

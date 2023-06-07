@@ -1,42 +1,42 @@
 #include "leg_locator/Grid.hpp"
 
-void Grid_map::segGrid(std::vector<std::pair<int, cv::Point2f>> &grid)
+void Grid_map::segGrid(std::vector<cv::Point2f> &_laser_pt, std::vector<std::pair<int, cv::Point2f>> &grid)
 {
 	seg_grid.setTo(255);
 
 	int clusterSize;
 	int actual_label = 0;
 
+
+
 	cv::line(seg_grid, cv::Point(grid_robot_col, 0), cv::Point(grid_robot_col, (grid_robot_col * 2)), cv::Scalar(0, 0, 255), 1, cv::LINE_AA);
 	cv::line(seg_grid, cv::Point(0, (grid_robot_col)), cv::Point((grid_robot_col * 2), grid_robot_col), cv::Scalar(0, 0, 255), 1, cv::LINE_AA);
 	cv::circle(seg_grid, cv::Point2f(grid_robot_col, grid_robot_row), 4, cv::Scalar(0, 0, 255), -1);
 	if (vizualizer == true)
 	{
-
 		int point_size = grid.size();
-		float min_distance = 0.0f;
-		cv::Point2f target;
+		int laser_size = _laser_pt.size();
 		int target_id;
+		int check_id;
+		int num_points = 0;
+
+		float min_distance = 0.0f;
+		
+		cv::Point2f target;
+		cv::Point2f grid_target;
+		cv::Point2f tmp_grid_target(0.0f,0.0f);
 
 		points_vector.resize(point_size);
 		
-
 		points_vector = grid;
-		for (int i = 0; i < point_size; i++)
+		for (int i = 0; i < laser_size; i++)
 		{
 			cv::Point2f points;
-			points.x = -(grid[i].second.y * mm2pixel) + grid_robot_col;
-			points.y = -(grid[i].second.x * mm2pixel) + grid_robot_row;
+			points.x = -(_laser_pt[i].y * mm2pixel) + grid_robot_col;
+			points.y = -(_laser_pt[i].x * mm2pixel) + grid_robot_row;
 			cv::circle(seg_grid, points, 2, cv::Scalar(0, 0, 0), -1);
 		}
 
-		cv::Point2f grid_target;
-		int check_id;
-		check_id = points_vector[0].first;
-
-
-		cv::Point2f tmp_grid_target(0.0f,0.0f);
-		int num_points = 0;
 
 		std::sort(points_vector.begin(), points_vector.end(), [&](std::pair<int, cv::Point2f> a, std::pair<int, cv::Point2f> b)
 				  { return euclidean_distance(a.second) < euclidean_distance(b.second); });
@@ -46,10 +46,13 @@ void Grid_map::segGrid(std::vector<std::pair<int, cv::Point2f>> &grid)
 		std::sort(points_vector.begin(), points_vector.end(), [&](std::pair<int, cv::Point2f> a, std::pair<int, cv::Point2f> b)
 				  { return a.first < b.first; });
 
+		check_id = points_vector[0].first;
+
 		for (int j = 0; j < point_size; j++)
-		{
+		{	
 			if(check_id == points_vector[j].first)
 			{
+
 				tmp_grid_target.x = tmp_grid_target.x + points_vector[j].second.x;
 				tmp_grid_target.y = tmp_grid_target.y + points_vector[j].second.y;
 				num_points++;
@@ -66,17 +69,41 @@ void Grid_map::segGrid(std::vector<std::pair<int, cv::Point2f>> &grid)
 				ss << check_id;
 				cv::String id = ss.str();
 				
-				if(check_id == target_id)
+				if(check_id == grid_id)
 				{
 					cv::putText(seg_grid, id, grid_target, 1, 3, cv::Scalar(0, 0, 255), 3);
 					cv::circle(seg_grid, grid_target, 30, cv::Scalar(0, 0, 255), 2);
 				}
-				else 
+				else
 				{
 					cv::putText(seg_grid, id, grid_target, 1, 3, cv::Scalar(255, 0, 0), 3);
-					cv::circle(seg_grid, grid_target, 30, cv::Scalar(255, 0, 0), 2);
+					cv::circle(seg_grid, grid_target, 30, cv::Scalar(255, 0, 0), 2); 
 				}
 				check_id = points_vector[j].first;
+			}
+
+			if(j == (point_size - 1))
+			{
+				grid_target.x = -((tmp_grid_target.y/num_points) * mm2pixel) + grid_robot_row;
+				grid_target.y = -((tmp_grid_target.x/num_points) * mm2pixel) + grid_robot_col;
+
+				num_points = 0;
+				tmp_grid_target = cv::Point2f(0.0f,0.0f);
+				
+				std::stringstream ss;
+				ss << check_id;
+				cv::String id = ss.str();
+				
+				if(check_id == grid_id)
+				{
+					cv::putText(seg_grid, id, grid_target, 1, 3, cv::Scalar(0, 0, 255), 3);
+					cv::circle(seg_grid, grid_target, 30, cv::Scalar(0, 0, 255), 2);
+				}
+				else
+				{
+					cv::putText(seg_grid, id, grid_target, 1, 3, cv::Scalar(255, 0, 0), 3);
+					cv::circle(seg_grid, grid_target, 30, cv::Scalar(255, 0, 0), 2); 
+				}
 			}
 		}
 

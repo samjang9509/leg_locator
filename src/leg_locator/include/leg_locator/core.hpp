@@ -74,10 +74,13 @@ private:
     std::vector<std::pair<int, cv::Point2f>> initialize_leg();
     float inline ed_btw_points(cv::Point2f first, cv::Point2f second);
     float inline euclidean_distance(cv::Point2f target);
-    
+
+    // int initializer(std::vector<std::pair<int, cv::Point2f>> &_leg_pt);
+    bool initialized;
+    int target_id;
 
     void segmentation(std::vector<cv::Point2f> &_laser_pt, std::vector<std::pair<int, cv::Point2f>> &_leg_pt);
-    void catch_target(std::vector<Cluster> leg_target);
+    void catch_target(std::vector<cv::Point2f> &_laser_pt, std::vector<Cluster> leg_target);
 
     void scan_CB(const sensor_msgs::LaserScan::ConstPtr &msg);
     void leg_CB(const leg_tracker::PersonArray::ConstPtr &person);
@@ -89,7 +92,7 @@ private:
     void leg_subscriber();
 
 public:
-    leg_locator() : this_name("leg_locator")
+    leg_locator() : this_name("leg_locator"), initialized(false), target_id(0)
     {
         this->odom_subscriber();
         this->leg_subscriber();

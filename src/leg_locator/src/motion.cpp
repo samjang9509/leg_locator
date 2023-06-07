@@ -34,9 +34,12 @@ void motion_control::move2target(cv::Point2f p_target)
 
     cv::Point2f target;
 
+    // ROS_INFO("p_target : (%f, %f)", p_target.x, p_target.y);
+
     target.x = mm2m(p_target.x);
     target.y = mm2m(p_target.y);
 
+    // ROS_INFO("target : (%f, %f)", target.x, target.y);
     double angle = atan2(target.y, target.x);
     float distance = ed_meter(target);
     try
