@@ -133,4 +133,5 @@ cv::Point2f Grid_map::pt2Grid(float x_co, float y_co)
 
 	cv::Point2f output(grid_x, grid_y);
 	return output;
+    cv::Point2f pt2Grid(float x_co, float y_co);
 }

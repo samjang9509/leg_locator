@@ -2,7 +2,7 @@
 
 void motion_control::init_Publisher()
 {
-    cmd_pub = nh.advertise<geometry_msgs::Twist>("/cmd_vel", 10);
+    cmd_pub = nh.advertise<geometry_msgs::Twist>("/leg_tracker/cmd_vel", 10);
 }
 
 float motion_control::ed_meter(cv::Point2f d_target)

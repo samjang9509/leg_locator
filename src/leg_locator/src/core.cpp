@@ -191,6 +191,7 @@ void leg_locator::catch_target(std::vector<cv::Point2f> &_laser_pt, std::vector<
 				{
 					target_id = leg_target[i].label;
 					vizual.grid_id = leg_target[i].label;
+					std::cout << "Caught target id :" << target_id << std::endl;
 					initialized = true;
 				}
 				else
@@ -218,8 +219,6 @@ void leg_locator::catch_target(std::vector<cv::Point2f> &_laser_pt, std::vector<
 					tmp_grid.first = leg_target[i].label;
 
 					grid.push_back(tmp_grid);
-
-					std::cout << "target id = " << target_id << std::endl;
 
 					if(target_id == leg_target[i].label)
 					{
