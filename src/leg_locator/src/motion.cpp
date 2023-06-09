@@ -44,7 +44,7 @@ void motion_control::move2target(cv::Point2f p_target)
     float distance = ed_meter(target);
     try
     {
-        // std::cout << "distance to target = " << distance << std::endl;
+        std::cout << "distance to target = " << distance << std::endl;
         if (distance < safe_distance)
         {
             vel_pub.linear.x = 0.0;
@@ -58,31 +58,39 @@ void motion_control::move2target(cv::Point2f p_target)
                 vel_pub.angular.z = 0.0;
             }
         }
+        else if(!target_track)
+        {
+            vel_pub.linear.x = 0.0;
+            vel_pub.linear.y = 0.0;
+            vel_pub.angular.z = 0.0;
+        }
         else
         {
+            std::cout << "current target" << target << std::endl;
+
             if (angle < 0 && target.x < 0)
             {
                 vel_pub.linear.x = std::max(-velocity(target.x), -min_lin_vel);
                 vel_pub.linear.y = std::max(-velocity(target.y), -min_lin_vel);
-                vel_pub.angular.z = std::max(angle/1.3, -min_ang_vel);
+                vel_pub.angular.z = std::min(-angle/1.3, min_ang_vel);
             }
             else if(angle < 0 && target.x > 0)
             {
                 vel_pub.linear.x = std::min(velocity(target.x), min_lin_vel);
                 vel_pub.linear.y = std::max(-velocity(target.y), -min_lin_vel);
-                vel_pub.angular.z = std::max(angle/1.3, -min_ang_vel);
+                vel_pub.angular.z = std::min(-angle/1.3, min_ang_vel);
             }
             else if(angle > 0 && target.x < 0)
             {
                 vel_pub.linear.x = std::max(-velocity(target.x), -min_lin_vel);
                 vel_pub.linear.y = std::min(velocity(target.y), min_lin_vel);
-                vel_pub.angular.z = std::min(angle/1.3, min_ang_vel);
+                vel_pub.angular.z = std::max(-angle/1.3, -min_ang_vel);
             }
             else if(angle > 0 && target.x > 0)
             {
                 vel_pub.linear.x = std::min(velocity(target.x), min_lin_vel);
                 vel_pub.linear.y = std::min(velocity(target.y), min_lin_vel);
-                vel_pub.angular.z = std::min(angle/1.3, min_ang_vel);
+                vel_pub.angular.z = std::max(-angle/1.3, -min_ang_vel);
             }
         }
     }

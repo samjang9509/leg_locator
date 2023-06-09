@@ -136,7 +136,7 @@ void leg_locator::segmentation(std::vector<cv::Point2f> &_laser_pt, std::vector<
 				float distance = ed_btw_points(tmp_target, tmp_laser[k]);
 				// std::cout << distance << std::endl;
 			
-				if (distance <= 300.0f)
+				if (distance <= 500.0f)
 				{
 					final_clusters[j].body.push_back(tmp_laser[k]);
 				}
@@ -187,7 +187,7 @@ void leg_locator::catch_target(std::vector<cv::Point2f> &_laser_pt, std::vector<
 
 				int laser_data_num = leg_target[i].body.size();
 
-				if(target_mean.x > 1500.0f && target_mean.x < 2500.0f && abs(target_mean.y) < 300.0f)
+				if(target_mean.x > 500.0f && target_mean.x < 2000.0f && abs(target_mean.y) < 300.0f)
 				{
 					target_id = leg_target[i].label;
 					vizual.grid_id = leg_target[i].label;
@@ -205,6 +205,7 @@ void leg_locator::catch_target(std::vector<cv::Point2f> &_laser_pt, std::vector<
 		{
 			for (int i = 0; i < cluster_num; i++)
 			{
+				Control.target_track = false;
 				cv::Point2f target_sum = std::accumulate(leg_target[i].body.begin(), leg_target[i].body.end(), zero);
 				int body_size = leg_target[i].body.size();
 
@@ -223,12 +224,12 @@ void leg_locator::catch_target(std::vector<cv::Point2f> &_laser_pt, std::vector<
 					if(target_id == leg_target[i].label)
 					{
 						final_target = target_mean;
+						Control.target_track = true;
 					}
 					else
 					{
 						continue;
 					}
-
 				}
 			}
 			Control.move2target(final_target);
