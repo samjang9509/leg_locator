@@ -240,12 +240,12 @@ void leg_locator::catch_target(std::vector<cv::Point2f> &_laser_pt, std::vector<
 
 }
 
-Cona_Odom leg_locator::laser2Odom(cv::Point2f laser_pt, OdoManager &odomPoint)
+Odom leg_locator::laser2Odom(cv::Point2f laser_pt, OdoManager &odomPoint)
 {
 	double d2r = 3.141592 / 180.0f;
 	double base_radian_th = odomPoint.robot.th * d2r;
 
-	Cona_Odom tmp_target;
+	Odom tmp_target;
 
 	tmp_target.x = ((double)laser_pt.x * cos(base_radian_th)) - ((double)laser_pt.y * sin(base_radian_th)) + odomPoint.robot.x;
 	tmp_target.y = ((double)laser_pt.x * sin(base_radian_th)) + ((double)laser_pt.y * cos(base_radian_th)) + odomPoint.robot.y;

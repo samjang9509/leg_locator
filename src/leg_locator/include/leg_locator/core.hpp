@@ -38,7 +38,7 @@ public:
     ros::Subscriber odom_sub_;
     ros::Subscriber leg_sub;
 
-    Cona_Odom odomCo;
+    Odom odomCo;
     OdoManager odomPt;
     receiver s_receiver;
     Grid_map vizual;
@@ -61,15 +61,15 @@ public:
 
 private:
    
-    Cona_Odom tmp_target;
-    Cona_Odom abs_target;
+    Odom tmp_target;
+    Odom abs_target;
 
     cv::Point2f final_target;
 
 	float m2mm = 1000.0f;
 
 
-    Cona_Odom laser2Odom(cv::Point2f laser_pt, OdoManager &odomPoint);
+    Odom laser2Odom(cv::Point2f laser_pt, OdoManager &odomPoint);
     std::vector<cv::Point2f> initialize_scan();
     std::vector<std::pair<int, cv::Point2f>> initialize_leg();
     float inline ed_btw_points(cv::Point2f first, cv::Point2f second);

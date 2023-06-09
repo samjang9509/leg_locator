@@ -22,8 +22,8 @@ public:
 
 	OdoManager odomGrp;
 
-	Cona_Odom tmp_target;
-	Cona_Odom abs_target;
+	Odom tmp_target;
+	Odom abs_target;
 
 	int grid_id;
 
