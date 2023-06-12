@@ -104,7 +104,7 @@ public:
 
 		return Odom(output.x, output.y, th);
 	}
-	nav_msgs::Odometry cona2ros(Odom input)
+	nav_msgs::Odometry robot2ros(Odom input)
 	{
 		nav_msgs::Odometry output;
 		output.pose.pose.position.x = input.x / 1000.0;
@@ -115,7 +115,7 @@ public:
 
 		return output;
 	}
-	Odom ros2cona(nav_msgs::Odometry input)
+	Odom ros2robot(nav_msgs::Odometry input)
 	{
 		Odom output;
 		output.x = input.pose.pose.position.x * 1000.0;
@@ -132,7 +132,7 @@ public:
 	void odom_callback(const nav_msgs::Odometry::ConstPtr &msg)
 	{
 		robot_mtx.lock();
-		robot = ros2cona(*msg);
+		robot = ros2robot(*msg);
 		// std::cout << "Catching bug (" << robot.x << ", " << robot.y << ")" << std::endl;
 		if (!flag_init)
 		{

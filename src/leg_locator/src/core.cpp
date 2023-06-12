@@ -1,20 +1,26 @@
 #include "leg_locator/core.hpp"
 
-void leg_locator::laserscan_topic_parser()
-{
-	scan_sub = nh.subscribe<sensor_msgs::LaserScan>("scan_multi", 1, &leg_locator::scan_CB, this);
-}
-
 void leg_locator::odom_subscriber()
 {
 	odom_sub_ = nh.subscribe("odom", 1, &OdoManager::odom_callback, &odomPt);
 }
 
-void leg_locator::leg_subscriber()
+void leg_locator::init_subscriber()
 {
-	leg_sub = nh.subscribe<leg_tracker::PersonArray>("people_tracked", 1, &leg_locator::leg_CB, this);
+	try
+	{
+		sync.registerCallback(boost::bind(&leg_locator::sync_callback, this, _1, _2));
+	}
+	catch(const std::exception& e)
+	{
+		std::cerr << e.what() << '\n';
+	}
+	catch(const ros::Exception& e)
+	{
+		ROS_ERROR("Error : %s", e.what());
+	}
+	
 }
-
 
 std::vector<cv::Point2f> leg_locator::initialize_scan()
 {
@@ -26,11 +32,18 @@ std::vector<std::pair<int, cv::Point2f>> leg_locator::initialize_leg()
 {
 	return dst_points;
 }
-
-void leg_locator::scan_CB(const sensor_msgs::LaserScan::ConstPtr &msg)
+ 
+void leg_locator::sync_callback(const sensor_msgs::LaserScan::ConstPtr &msg, const leg_tracker::PersonArray::ConstPtr &person)
 {
+	std::vector<std::pair<int, cv::Point2f>> tmp_dst;
+	leg_tracker::PersonArray tmp_person;
+
+	tmp_person.header = person->header;
+	tmp_person.people = person->people;
+
 	s_receiver.get_tf(msg->header.frame_id);
 
+// Laser
 	int size = std::min((int)msg->ranges.size(), 1440);
 	float angle_min = msg->angle_min;
 	float angle_max = msg->angle_max;
@@ -56,19 +69,8 @@ void leg_locator::scan_CB(const sensor_msgs::LaserScan::ConstPtr &msg)
 		point_m.push_back(tmp_pt);
 		dst_v = point_m;
 	}
-	point_m.clear();
-}
 
-void leg_locator::leg_CB(const leg_tracker::PersonArray::ConstPtr &person)
-{
-	std::vector<std::pair<int, cv::Point2f>> tmp_dst;
-
-
-	leg_tracker::PersonArray tmp_person;
-
-	tmp_person.header = person->header;
-	tmp_person.people = person->people;
-
+// person 
 	int person_size = tmp_person.people.size();
 	if (person_size == 0)
 	{
@@ -100,7 +102,10 @@ void leg_locator::leg_CB(const leg_tracker::PersonArray::ConstPtr &person)
 		}
 		tmp_dst.clear();
 	}
+
+	point_m.clear();
 }
+
 
 void leg_locator::segmentation(std::vector<cv::Point2f> &_laser_pt, std::vector<std::pair<int, cv::Point2f>> &_leg_pt)
 {
@@ -134,8 +139,7 @@ void leg_locator::segmentation(std::vector<cv::Point2f> &_laser_pt, std::vector<
 			for (int k = 0; k < v_size; k++)
 			{
 				float distance = ed_btw_points(tmp_target, tmp_laser[k]);
-				// std::cout << distance << std::endl;
-			
+							
 				if (distance <= 500.0f)
 				{
 					final_clusters[j].body.push_back(tmp_laser[k]);

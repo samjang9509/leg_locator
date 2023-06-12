@@ -16,6 +16,7 @@ find_package(catkin REQUIRED COMPONENTS
   tf
   leg_tracker
   message_generation
+  message_filters
 )
 find_package(OpenCV REQUIRED)
 find_package(Boost REQUIRED COMPONENTS system)
@@ -114,7 +115,7 @@ catkin_package(
   INCLUDE_DIRS include
   CATKIN_DEPENDS message_runtime
 #  LIBRARIES leg_docking
-  CATKIN_DEPENDS geometry_msgs roscpp rospy sensor_msgs std_msgs leg_tracker
+  CATKIN_DEPENDS geometry_msgs roscpp rospy sensor_msgs std_msgs leg_tracker message_filters
 #  DEPENDS system_lib
 )
 

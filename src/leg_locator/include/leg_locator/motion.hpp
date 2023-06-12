@@ -29,7 +29,7 @@ public:
     // void param_callback();
 
     motion_control() : max_lin_vel(0.7), min_lin_vel(0.2),
-    safe_distance(0.0008f), min_ang_vel(0.05), max_ang_vel(0.2), target_track(true)
+    safe_distance(0.3f), min_ang_vel(0.05), max_ang_vel(0.2), target_track(true)
     {
         // param_callback();
         this->init_Publisher();

@@ -1,6 +1,6 @@
 #include "leg_locator/systems.hpp"
 #include "leg_locator/receiver.hpp"
-#include "leg_locator/OdomManager.hpp"
+// #include "leg_locator/OdomManager.hpp"
 
 
 #define RAD2DEG(x) ((x)*180. / M_PI)
@@ -20,10 +20,10 @@ public:
 	cv::Mat occup;
 	cv::Mat seg_grid;
 
-	OdoManager odomGrp;
+	// OdoManager odomGrp;
 
-	Odom tmp_target;
-	Odom abs_target;
+	// Odom tmp_target;
+	// Odom abs_target;
 
 	int grid_id;
 
