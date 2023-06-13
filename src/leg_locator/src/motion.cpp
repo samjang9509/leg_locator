@@ -34,19 +34,24 @@ void motion_control::move2target(cv::Point2f p_target)
 
     cv::Point2f target;
 
-    // ROS_INFO("p_target : (%f, %f)", p_target.x, p_target.y);
+    // std::cout << "Motion target coordinate : (" << final_target.x << ", " << final_target.y << ", " << final_target.th << ")" << std::endl;
+    // std::cout << "Motion Robot coordinate : (" << odomPt.robot.x << ", " << odomPt.robot.y << ", " << odomPt.robot.th << ")" << std::endl;
 
-    target.x = mm2m(p_target.x);
-    target.y = mm2m(p_target.y);
+    target.x = final_target.x - odomPt.robot.x;
+    target.y = final_target.y - odomPt.robot.y;
 
     // ROS_INFO("target : (%f, %f)", target.x, target.y);
     double angle = atan2(target.y, target.x);
     float distance = ed_meter(target);
     try
     {
+        // std::cout << "target_track error?" << target_track << std::endl;
+        // std::cout << "target : " << target << std::endl;
         // std::cout << "distance to target = " << distance << std::endl;
+        // std::cout << "safe_distance : " << safe_distance << std::endl;
         if (distance < safe_distance)
         {
+            ROS_INFO("Too Close");
             vel_pub.linear.x = 0.0;
             vel_pub.linear.y = 0.0;
             if(abs(angle) > 0.1)
@@ -60,13 +65,14 @@ void motion_control::move2target(cv::Point2f p_target)
         }
         else if(!target_track)
         {
+            ROS_ERROR("Motion has not been activated");
             vel_pub.linear.x = 0.0;
             vel_pub.linear.y = 0.0;
             vel_pub.angular.z = 0.0;
         }
         else
         {
-            // std::cout << "current target" << target << std::endl;
+            // std::cout << angle << std::endl;
 
             if (angle < 0 && target.x < 0)
             {

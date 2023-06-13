@@ -1,5 +1,5 @@
 <launch>
 
-        <node pkg="leg_locator" type="leg_locator" name="leg_locator" output="screen"/>         
+        <node pkg="leg_locator" type="leg_locator_node" name="leg_locator_node" output="screen"/>         
         <include file="$(find leg_tracker)/launch/joint_leg_tracker.launch"/>
 </launch>

@@ -1,6 +1,6 @@
 #include "leg_locator/systems.hpp"
 #include "leg_locator/receiver.hpp"
-// #include "leg_locator/OdomManager.hpp"
+#include "leg_locator/OdomManager.hpp"
 
 
 #define RAD2DEG(x) ((x)*180. / M_PI)
@@ -16,14 +16,14 @@ private:
 
 public:
 	std::string this_name;
-	cv::Mat Grid;
-	cv::Mat occup;
+	cv::Mat odom_grid;
 	cv::Mat seg_grid;
 
-	// OdoManager odomGrp;
+    OdoManager odomPt;
 
-	// Odom tmp_target;
-	// Odom abs_target;
+	Odom tmp_target;
+	Odom abs_laser_points;
+	Odom abs_target;
 
 	int grid_id;
 
@@ -36,16 +36,16 @@ public:
 
 	bool vizualizer;
 
+	Odom laser2Odom(cv::Point2f laser_pt, OdoManager &odomPoint);
+
     void segGrid(std::vector<cv::Point2f> &_laser_pt, std::vector<std::pair<int,cv::Point2f>>  &grid);
-	// float euclidean_distance(cv::Point2f check_distance, cv::Point2f origin);
 	float inline euclidean_distance(cv::Point2f check_distance);
 
     cv::Point2f pt2Grid(float x_co, float y_co);
 public:
 	Grid_map() : this_name("Grid_map"), vizualizer(true), robot(grid_robot_row, grid_robot_col)
 	{
-		Grid = cv::Mat(grid_row, grid_col, CV_8UC3, cv::Scalar(0, 0, 0));
-		occup = cv::Mat(grid_row, grid_col, CV_8UC3, cv::Scalar(0, 0, 0));
+		odom_grid = cv::Mat(grid_row, grid_col, CV_8UC3, cv::Scalar(0, 0, 0));
 		seg_grid = cv::Mat(grid_row, grid_col, CV_8UC3, cv::Scalar(0, 0, 0));
 	}
 	~Grid_map()

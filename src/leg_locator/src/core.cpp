@@ -209,7 +209,7 @@ void leg_locator::catch_target(std::vector<cv::Point2f> &_laser_pt, std::vector<
 		{
 			for (int i = 0; i < cluster_num; i++)
 			{
-				Control.target_track = false;
+				// Control.target_track = false;
 				cv::Point2f target_sum = std::accumulate(leg_target[i].body.begin(), leg_target[i].body.end(), zero);
 				int body_size = leg_target[i].body.size();
 
@@ -229,6 +229,7 @@ void leg_locator::catch_target(std::vector<cv::Point2f> &_laser_pt, std::vector<
 					{
 						final_target = target_mean;
 						Control.target_track = true;
+						target_odom(final_target);
 					}
 					else
 					{
@@ -241,7 +242,23 @@ void leg_locator::catch_target(std::vector<cv::Point2f> &_laser_pt, std::vector<
 			grid.clear();
 		}
 	}
+}
 
+void leg_locator::target_odom(cv::Point2f final_target)
+{
+	Odom target;
+ 
+	target = laser2Odom(final_target, odomPt);
+
+	odomCo.addMotion(target);
+
+	// std::cout << "target coordinate : (" << target.x << ", " << target.y << ", " << target.th << std::endl;
+	// std::cout << "Robot coordinate : (" << odomPt.robot.x << ", " << odomPt.robot.y << ", " << odomPt.robot.th << std::endl;
+	
+	Control.odomPt.robot = odomPt.robot;
+	Control.final_target = target;
+	vizual.odomPt.robot = odomPt.robot;
+	vizual.abs_target = target;
 }
 
 Odom leg_locator::laser2Odom(cv::Point2f laser_pt, OdoManager &odomPoint)
@@ -249,12 +266,12 @@ Odom leg_locator::laser2Odom(cv::Point2f laser_pt, OdoManager &odomPoint)
 	double d2r = 3.141592 / 180.0f;
 	double base_radian_th = odomPoint.robot.th * d2r;
 
-	Odom tmp_target;
+	Odom output;
 
-	tmp_target.x = ((double)laser_pt.x * cos(base_radian_th)) - ((double)laser_pt.y * sin(base_radian_th)) + odomPoint.robot.x;
-	tmp_target.y = ((double)laser_pt.x * sin(base_radian_th)) + ((double)laser_pt.y * cos(base_radian_th)) + odomPoint.robot.y;
+	output.x = ((double)laser_pt.x * cos(base_radian_th)) - ((double)laser_pt.y * sin(base_radian_th)) + odomPoint.robot.x;
+	output.y = ((double)laser_pt.x * sin(base_radian_th)) + ((double)laser_pt.y * cos(base_radian_th)) + odomPoint.robot.y;
 
-	return tmp_target;
+	return output;
 }
 
 float inline leg_locator::ed_btw_points(cv::Point2f first, cv::Point2f second)

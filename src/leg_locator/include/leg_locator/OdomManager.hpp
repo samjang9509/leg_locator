@@ -1,5 +1,5 @@
-// #ifndef Odometry
-// #define Odometry
+#ifndef Odo
+#define Odo
 
 #include "leg_locator/systems.hpp"
 
@@ -143,4 +143,4 @@ public:
 	}
 };
 
-// #endif
+#endif
