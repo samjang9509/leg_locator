@@ -23,6 +23,7 @@ private:
 public:
     OdoManager odomPt;
 
+    Odom tmp_target;
     Odom final_target;
 
     void init_Publisher();

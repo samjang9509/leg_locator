@@ -122,7 +122,8 @@ void Grid_map::segGrid(std::vector<cv::Point2f> &_laser_pt, std::vector<std::pai
 				oo << grid_id;
 				cv::String o_id = oo.str();
 
-				cv::circle(odom_grid, abs_target_odom, 2, cv::Scalar(0, 0, 0), -1);
+				cv::circle(odom_grid, abs_target_odom, 2, cv::Scalar(0, 0, 255), -1);
+				cv::circle(odom_grid, abs_target_odom, 30, cv::Scalar(0, 0, 255), 2);
 				cv::putText(odom_grid, o_id, abs_target_odom, 1, 3, cv::Scalar(0, 0, 255), 3);
 			}
 		}

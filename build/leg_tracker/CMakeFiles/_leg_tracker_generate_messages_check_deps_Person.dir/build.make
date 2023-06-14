@@ -54,7 +54,7 @@ CMAKE_BINARY_DIR = /home/cona/leg_locator/build
 include leg_tracker/CMakeFiles/_leg_tracker_generate_messages_check_deps_Person.dir/progress.make
 
 leg_tracker/CMakeFiles/_leg_tracker_generate_messages_check_deps_Person:
-	cd /home/cona/leg_locator/build/leg_tracker && ../catkin_generated/env_cached.sh /usr/bin/python3 /opt/ros/noetic/share/genmsg/cmake/../../../lib/genmsg/genmsg_check_deps.py leg_tracker /home/cona/leg_locator/src/leg_tracker/msg/Person.msg geometry_msgs/Point:geometry_msgs/Pose:geometry_msgs/Quaternion
+	cd /home/cona/leg_locator/build/leg_tracker && ../catkin_generated/env_cached.sh /usr/bin/python3 /opt/ros/noetic/share/genmsg/cmake/../../../lib/genmsg/genmsg_check_deps.py leg_tracker /home/cona/leg_locator/src/leg_tracker/msg/Person.msg geometry_msgs/Quaternion:geometry_msgs/Pose:geometry_msgs/Point
 
 _leg_tracker_generate_messages_check_deps_Person: leg_tracker/CMakeFiles/_leg_tracker_generate_messages_check_deps_Person
 _leg_tracker_generate_messages_check_deps_Person: leg_tracker/CMakeFiles/_leg_tracker_generate_messages_check_deps_Person.dir/build.make

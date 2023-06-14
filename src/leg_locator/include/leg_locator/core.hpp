@@ -63,8 +63,7 @@ public:
     message_filters::Synchronizer<MySyncPolicy> sync;
 
 private:
-   
-    Odom tmp_target;
+    
     Odom abs_target;
 
     cv::Point2f final_target;

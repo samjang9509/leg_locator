@@ -4,9 +4,15 @@ project(leg_locator)
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
 
+set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_CXX_FLAGS "-O0 -DDEBUG -std=c++11")
+#set(CMAKE_BUILD_TYPE Release)
+#add_compile_options(-std=c++11)
+#set(CMAKE_CXX_FLAGS "-O2 -std=c++11")
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
+
 find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
   roscpp

@@ -34,21 +34,25 @@ void motion_control::move2target(cv::Point2f p_target)
 
     cv::Point2f target;
 
-    // std::cout << "Motion target coordinate : (" << final_target.x << ", " << final_target.y << ", " << final_target.th << ")" << std::endl;
-    // std::cout << "Motion Robot coordinate : (" << odomPt.robot.x << ", " << odomPt.robot.y << ", " << odomPt.robot.th << ")" << std::endl;
+    std::cout << "Motion final_target coordinate : (" << final_target.x << ", " << final_target.y << ", " << final_target.th << ")" << std::endl;
+    std::cout << "Motion Robot coordinate : (" << odomPt.robot.x << ", " << odomPt.robot.y << ", " << odomPt.robot.th << ")" << std::endl;
 
-    target.x = final_target.x - odomPt.robot.x;
-    target.y = final_target.y - odomPt.robot.y;
+    // target.x = final_target.x - odomPt.robot.x;
+    // target.y = final_target.y - odomPt.robot.y;
 
+    
+
+    std::cout << "Motion tmp_target coordinate : (" << tmp_target.x << ", " << tmp_target.y << ", " << tmp_target.th << ")" << std::endl;
+
+    target.x = tmp_target.x;
+    target.y = tmp_target.y;
+
+    std::cout << "target : " << target << std::endl;
     // ROS_INFO("target : (%f, %f)", target.x, target.y);
     double angle = atan2(target.y, target.x);
     float distance = ed_meter(target);
     try
     {
-        // std::cout << "target_track error?" << target_track << std::endl;
-        // std::cout << "target : " << target << std::endl;
-        // std::cout << "distance to target = " << distance << std::endl;
-        // std::cout << "safe_distance : " << safe_distance << std::endl;
         if (distance < safe_distance)
         {
             ROS_INFO("Too Close");

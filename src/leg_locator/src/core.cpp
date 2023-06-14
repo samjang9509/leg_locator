@@ -207,6 +207,9 @@ void leg_locator::catch_target(std::vector<cv::Point2f> &_laser_pt, std::vector<
 		}
 		else
 		{
+			vizual.odomPt.robot = odomPt.robot;
+			Control.odomPt.robot = odomPt.robot;
+
 			for (int i = 0; i < cluster_num; i++)
 			{
 				// Control.target_track = false;
@@ -228,14 +231,15 @@ void leg_locator::catch_target(std::vector<cv::Point2f> &_laser_pt, std::vector<
 					if(target_id == leg_target[i].label)
 					{
 						final_target = target_mean;
-						Control.target_track = true;
 						target_odom(final_target);
+						// Control.target_track = true;
 					}
 					else
 					{
 						continue;
 					}
 				}
+				// std::cout << "final target coordinate : " << final_target << std::endl;
 			}
 			Control.move2target(final_target);
 			vizual.segGrid(grid_laser, grid);
@@ -252,12 +256,11 @@ void leg_locator::target_odom(cv::Point2f final_target)
 
 	odomCo.addMotion(target);
 
+	std::cout << "odomCo coordinate : (" << odomCo.x << ", " << odomCo.y << ", " << odomCo.th << std::endl;
 	// std::cout << "target coordinate : (" << target.x << ", " << target.y << ", " << target.th << std::endl;
 	// std::cout << "Robot coordinate : (" << odomPt.robot.x << ", " << odomPt.robot.y << ", " << odomPt.robot.th << std::endl;
 	
-	Control.odomPt.robot = odomPt.robot;
 	Control.final_target = target;
-	vizual.odomPt.robot = odomPt.robot;
 	vizual.abs_target = target;
 }
 
