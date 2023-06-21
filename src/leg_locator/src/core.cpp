@@ -204,8 +204,8 @@ void leg_locator::catch_target(std::vector<cv::Point2f> &_laser_pt, std::vector<
 					ROS_INFO("No suitable Candidate");
 					continue;
 				}
-				vizual.initGrid(grid_laser);
 			}
+			vizual.initGrid(grid_laser);
 		}
 		else
 		{

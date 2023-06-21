@@ -140,6 +140,8 @@ void Grid_map::initGrid(std::vector<cv::Point2f> &_laser_pt)
 
 	if (vizualizer)
 	{
+
+		std::cout << "is this working" << std::endl;
 		cv::line(init_grid, cv::Point(grid_robot_col, 0), cv::Point(grid_robot_col, (grid_robot_col * 2)), cv::Scalar(0, 0, 255), 1, cv::LINE_AA);
 		cv::line(init_grid, cv::Point(0, (grid_robot_col)), cv::Point((grid_robot_col * 2), grid_robot_col), cv::Scalar(0, 0, 255), 1, cv::LINE_AA);
 		cv::circle(init_grid, cv::Point2f(grid_robot_col, grid_robot_row), 4, cv::Scalar(0, 0, 255), -1);
@@ -168,7 +170,7 @@ void Grid_map::initGrid(std::vector<cv::Point2f> &_laser_pt)
 			cv::circle(init_grid, points, 2, cv::Scalar(0, 0, 0), -1);		
 		}
 
-		cv::imshow("leg_detector", init_grid);
+		cv::imshow("initial_map", init_grid);
 	}		
 }
 
