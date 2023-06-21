@@ -191,7 +191,8 @@ void leg_locator::catch_target(std::vector<cv::Point2f> &_laser_pt, std::vector<
 
 				int laser_data_num = leg_target[i].body.size();
 
-				if(target_mean.x > 500.0f && target_mean.x < 2000.0f && abs(target_mean.y) < 300.0f)
+
+				if(target_mean.x > 1000.0f && target_mean.x < 2000.0f && abs(target_mean.y) < 300.0f)
 				{
 					target_id = leg_target[i].label;
 					vizual.grid_id = leg_target[i].label;
@@ -203,6 +204,7 @@ void leg_locator::catch_target(std::vector<cv::Point2f> &_laser_pt, std::vector<
 					ROS_INFO("No suitable Candidate");
 					continue;
 				}
+				vizual.initGrid(grid_laser);
 			}
 		}
 		else

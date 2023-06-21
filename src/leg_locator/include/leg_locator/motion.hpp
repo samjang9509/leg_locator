@@ -25,6 +25,7 @@ public:
 
     Odom tmp_target;
     Odom final_target;
+    cv::Point2f laser_target;
 
     void init_Publisher();
     void move2target(cv::Point2f p_target);

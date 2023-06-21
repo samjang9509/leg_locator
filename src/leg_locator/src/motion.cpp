@@ -33,24 +33,23 @@ void motion_control::move2target(cv::Point2f p_target)
     geometry_msgs::Twist vel_pub;
 
     cv::Point2f target;
+    cv::Point2f odom_target;
 
-    std::cout << "Motion final_target coordinate : (" << final_target.x << ", " << final_target.y << ", " << final_target.th << ")" << std::endl;
-    std::cout << "Motion Robot coordinate : (" << odomPt.robot.x << ", " << odomPt.robot.y << ", " << odomPt.robot.th << ")" << std::endl;
+    // std::cout << "Motion final_target coordinate : (" << final_target.x << ", " << final_target.y << ", " << final_target.th << ")" << std::endl;
+    // std::cout << "Motion Robot coordinate : (" << odomPt.robot.x << ", " << odomPt.robot.y << ", " << odomPt.robot.th << ")" << std::endl;
 
-    // target.x = final_target.x - odomPt.robot.x;
-    // target.y = final_target.y - odomPt.robot.y;
-
+    odom_target.x = final_target.x - odomPt.robot.x;
+    odom_target.y = final_target.y - odomPt.robot.y;
     
 
-    std::cout << "Motion tmp_target coordinate : (" << tmp_target.x << ", " << tmp_target.y << ", " << tmp_target.th << ")" << std::endl;
+    // std::cout << "Motion tmp_target coordinate : (" << tmp_target.x << ", " << tmp_target.y << ", " << tmp_target.th << ")" << std::endl;
 
-    target.x = tmp_target.x;
-    target.y = tmp_target.y;
+    target.x = p_target.x;
+    target.y = p_target.y;
 
     std::cout << "target : " << target << std::endl;
-    // ROS_INFO("target : (%f, %f)", target.x, target.y);
     double angle = atan2(target.y, target.x);
-    float distance = ed_meter(target);
+    float distance = ed_meter(odom_target);
     try
     {
         if (distance < safe_distance)

@@ -133,6 +133,45 @@ void Grid_map::segGrid(std::vector<cv::Point2f> &_laser_pt, std::vector<std::pai
 	points_vector.clear();
 }
 
+void Grid_map::initGrid(std::vector<cv::Point2f> &_laser_pt)
+{
+	init_grid.setTo(255);
+	
+
+	if (vizualizer)
+	{
+		cv::line(init_grid, cv::Point(grid_robot_col, 0), cv::Point(grid_robot_col, (grid_robot_col * 2)), cv::Scalar(0, 0, 255), 1, cv::LINE_AA);
+		cv::line(init_grid, cv::Point(0, (grid_robot_col)), cv::Point((grid_robot_col * 2), grid_robot_col), cv::Scalar(0, 0, 255), 1, cv::LINE_AA);
+		cv::circle(init_grid, cv::Point2f(grid_robot_col, grid_robot_row), 4, cv::Scalar(0, 0, 255), -1);
+		cv::circle(init_grid, cv::Point2f(grid_robot_col, grid_robot_row + 100.0f), 30, cv::Scalar(0, 0, 255), 2);
+		
+		int clusterSize;
+		int actual_label = 0;
+
+		int laser_size = _laser_pt.size();
+		int target_id;
+		int check_id;
+		int num_points = 0;
+
+		float min_distance = 0.0f;
+
+		cv::Point2f target;
+		cv::Point2f grid_target;
+		cv::Point2f tmp_grid_target(0.0f, 0.0f);
+
+		for (int i = 0; i < laser_size; i++)
+		{
+			cv::Point2f points;
+			cv::Point2f Opoints;
+			points.x = -(_laser_pt[i].y * mm2pixel) + grid_robot_col;
+			points.y = -(_laser_pt[i].x * mm2pixel) + grid_robot_row;
+			cv::circle(init_grid, points, 2, cv::Scalar(0, 0, 0), -1);		
+		}
+
+		cv::imshow("leg_detector", init_grid);
+	}		
+}
+
 float inline Grid_map::euclidean_distance(cv::Point2f check_distance)
 {
 	return std::sqrt(pow((check_distance.x), 2) + pow((check_distance.y), 2));
