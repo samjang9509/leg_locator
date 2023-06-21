@@ -140,12 +140,10 @@ void Grid_map::initGrid(std::vector<cv::Point2f> &_laser_pt)
 
 	if (vizualizer)
 	{
-
-		std::cout << "is this working" << std::endl;
 		cv::line(init_grid, cv::Point(grid_robot_col, 0), cv::Point(grid_robot_col, (grid_robot_col * 2)), cv::Scalar(0, 0, 255), 1, cv::LINE_AA);
 		cv::line(init_grid, cv::Point(0, (grid_robot_col)), cv::Point((grid_robot_col * 2), grid_robot_col), cv::Scalar(0, 0, 255), 1, cv::LINE_AA);
 		cv::circle(init_grid, cv::Point2f(grid_robot_col, grid_robot_row), 4, cv::Scalar(0, 0, 255), -1);
-		cv::circle(init_grid, cv::Point2f(grid_robot_col, grid_robot_row + 100.0f), 30, cv::Scalar(0, 0, 255), 2);
+		cv::circle(init_grid, cv::Point2f(grid_robot_col, grid_robot_row - 75.0f), 25, cv::Scalar(0, 0, 255), 2);
 		
 		int clusterSize;
 		int actual_label = 0;

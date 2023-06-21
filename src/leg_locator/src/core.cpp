@@ -1,49 +1,25 @@
 #include "leg_locator/core.hpp"
 
+void leg_locator::laserscan_topic_parser()
+{
+	scan_sub = nh.subscribe<sensor_msgs::LaserScan>("scan_multi", 1, &leg_locator::scan_CB, this);
+}
+
 void leg_locator::odom_subscriber()
 {
 	odom_sub_ = nh.subscribe("odom", 1, &OdoManager::odom_callback, &odomPt);
 }
 
-void leg_locator::init_subscriber()
+void leg_locator::leg_subscriber()
 {
-	try
-	{
-		sync.registerCallback(boost::bind(&leg_locator::sync_callback, this, _1, _2));
-	}
-	catch(const std::exception& e)
-	{
-		std::cerr << e.what() << '\n';
-	}
-	catch(const ros::Exception& e)
-	{
-		ROS_ERROR("Error : %s", e.what());
-	}
-	
+	leg_sub = nh.subscribe<leg_tracker::PersonArray>("people_tracked", 1, &leg_locator::leg_CB, this);
 }
 
-std::vector<cv::Point2f> leg_locator::initialize_scan()
-{
-	point_m.clear();
-	return dst_v;
-}
 
-std::vector<std::pair<int, cv::Point2f>> leg_locator::initialize_leg()
+void leg_locator::scan_CB(const sensor_msgs::LaserScan::ConstPtr &msg)
 {
-	return dst_points;
-}
- 
-void leg_locator::sync_callback(const sensor_msgs::LaserScan::ConstPtr &msg, const leg_tracker::PersonArray::ConstPtr &person)
-{
-	std::vector<std::pair<int, cv::Point2f>> tmp_dst;
-	leg_tracker::PersonArray tmp_person;
-
-	tmp_person.header = person->header;
-	tmp_person.people = person->people;
-
 	s_receiver.get_tf(msg->header.frame_id);
 
-// Laser
 	int size = std::min((int)msg->ranges.size(), 1440);
 	float angle_min = msg->angle_min;
 	float angle_max = msg->angle_max;
@@ -69,8 +45,19 @@ void leg_locator::sync_callback(const sensor_msgs::LaserScan::ConstPtr &msg, con
 		point_m.push_back(tmp_pt);
 		dst_v = point_m;
 	}
+	point_m.clear();
+}
 
-// person 
+void leg_locator::leg_CB(const leg_tracker::PersonArray::ConstPtr &person)
+{
+	std::vector<std::pair<int, cv::Point2f>> tmp_dst;
+
+
+	leg_tracker::PersonArray tmp_person;
+
+	tmp_person.header = person->header;
+	tmp_person.people = person->people;
+
 	int person_size = tmp_person.people.size();
 	if (person_size == 0)
 	{
@@ -102,9 +89,110 @@ void leg_locator::sync_callback(const sensor_msgs::LaserScan::ConstPtr &msg, con
 		}
 		tmp_dst.clear();
 	}
-
-	point_m.clear();
 }
+
+std::vector<cv::Point2f> leg_locator::initialize_scan()
+{
+	point_m.clear();
+	return dst_v;
+}
+
+std::vector<std::pair<int, cv::Point2f>> leg_locator::initialize_leg()
+{
+	return dst_points;
+}
+
+// void leg_locator::init_subscriber()
+// {
+// 	try
+// 	{
+// 		sync.registerCallback(boost::bind(&leg_locator::sync_callback, this, _1, _2));
+// 	}
+// 	catch(const std::exception& e)
+// 	{
+// 		std::cerr << e.what() << '\n';
+// 	}
+// 	catch(const ros::Exception& e)
+// 	{
+// 		ROS_ERROR("Error : %s", e.what());
+// 	}
+	
+// }
+
+ 
+// void leg_locator::sync_callback(const sensor_msgs::LaserScan::ConstPtr &msg, const leg_tracker::PersonArray::ConstPtr &person)
+// {
+// 	std::cout << "Callback is Running" << std::endl;
+// 	std::vector<std::pair<int, cv::Point2f>> tmp_dst;
+// 	leg_tracker::PersonArray tmp_person;
+
+// 	tmp_person.header = person->header;
+// 	tmp_person.people = person->people;
+
+// 	s_receiver.get_tf(msg->header.frame_id);
+
+// // Laser
+// 	int size = std::min((int)msg->ranges.size(), 1440);
+// 	float angle_min = msg->angle_min;
+// 	float angle_max = msg->angle_max;
+// 	float angle_increment = msg->angle_increment;
+// 	float range_min = (float)msg->range_min;
+// 	float range_max = (float)msg->range_max;
+
+// 	for (int i = 0; i < size; i++)
+// 	{
+// 		float val = msg->ranges[i];
+// 		if (val <= range_min || val >= range_max || !std::isfinite(val) || val == 0.0)
+// 			continue;
+// 		float angle = angle_min + angle_increment * (float)i;
+// 		float degree = angle * 180.0f / CV_PI;
+// 		float x = cos(angle) * val;
+// 		float y = sin(angle) * val;
+// 		tf::Vector3 p(x, y, 0);
+// 		tf::Vector3 reprj_p = s_receiver.R * p + s_receiver.T;
+// 		cv::Point2f tmp_pt;
+// 		tmp_pt.x = 1000.0f * reprj_p.getX();
+// 		tmp_pt.y = 1000.0f * reprj_p.getY();
+
+// 		point_m.push_back(tmp_pt);
+// 		dst_v = point_m;
+// 	}
+
+// // person 
+// 	int person_size = tmp_person.people.size();
+// 	if (person_size == 0)
+// 	{
+// 		ROS_INFO("No Deteced Person");
+// 	}
+// 	else
+// 	{
+// 		tmp_dst.resize(person_size);
+
+// 		for (int i = 0; i < person_size; i++)
+// 		{
+			
+// 				tmp_dst[i].second.x = tmp_person.people[i].pose.position.x;
+// 				tmp_dst[i].second.y = tmp_person.people[i].pose.position.y;
+// 				tmp_dst[i].first = (int)tmp_person.people[i].id;
+// 		}
+
+
+// 		int size = tmp_dst.size();
+
+// 		if (size == 0)
+// 		{
+// 				std::cout << "Searching for leg input" << std::endl;
+// 		}
+// 		else
+// 		{
+// 				dst_points.swap(tmp_dst);
+
+// 		}
+// 		tmp_dst.clear();
+// 	}
+
+// 	point_m.clear();
+// }
 
 
 void leg_locator::segmentation(std::vector<cv::Point2f> &_laser_pt, std::vector<std::pair<int, cv::Point2f>> &_leg_pt)
@@ -295,7 +383,7 @@ void leg_locator::runloop()
 
 	thread_list.push_back(std::move(std::thread([this]
 												{
-        ros::Rate hz(20);
+        ros::Rate hz(10);
         while(ros::ok()){
             src_laser = std::move(initialize_scan());
 			src_person = std::move(initialize_leg());

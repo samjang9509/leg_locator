@@ -47,7 +47,7 @@ void motion_control::move2target(cv::Point2f p_target)
     target.x = p_target.x;
     target.y = p_target.y;
 
-    std::cout << "target : " << target << std::endl;
+    // std::cout << "target : " << target << std::endl;
     double angle = atan2(target.y, target.x);
     float distance = ed_meter(odom_target);
     try

@@ -122,10 +122,6 @@ leg_locator/Grid.hpp
 leg_locator/core.hpp
 /home/cona/leg_locator/src/leg_locator/src/leg_locator/core.hpp
 
-/home/cona/leg_locator/src/leg_locator/src/main.cpp
-leg_locator/core.hpp
-/home/cona/leg_locator/src/leg_locator/src/leg_locator/core.hpp
-
 /opt/ros/noetic/include/geometry_msgs/Point.h
 string
 -
