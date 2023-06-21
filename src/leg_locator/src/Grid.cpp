@@ -169,7 +169,6 @@ void Grid_map::initGrid(std::vector<cv::Point2f> &_laser_pt)
 			points.y = -(_laser_pt[i].x * mm2pixel) + grid_robot_row;
 			cv::circle(init_grid, points, 2, cv::Scalar(0, 0, 0), -1);		
 		}
-
 		cv::imshow("initial_map", init_grid);
 	}		
 }

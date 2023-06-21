@@ -180,7 +180,7 @@ void leg_locator::catch_target(std::vector<cv::Point2f> &_laser_pt, std::vector<
 	{
 		if(!initialized)
 		{
-
+			vizual.initGrid(grid_laser);
 			for (int i = 0; i < cluster_num; i++)
 			{
 				cv::Point2f target_sum = std::accumulate(leg_target[i].body.begin(), leg_target[i].body.end(), zero);
@@ -198,6 +198,7 @@ void leg_locator::catch_target(std::vector<cv::Point2f> &_laser_pt, std::vector<
 					vizual.grid_id = leg_target[i].label;
 					std::cout << "Caught target id :" << target_id << std::endl;
 					initialized = true;
+					cv::destroyWindow("initial_map");
 				}
 				else
 				{
@@ -205,7 +206,6 @@ void leg_locator::catch_target(std::vector<cv::Point2f> &_laser_pt, std::vector<
 					continue;
 				}
 			}
-			vizual.initGrid(grid_laser);
 		}
 		else
 		{
@@ -258,7 +258,7 @@ void leg_locator::target_odom(cv::Point2f final_target)
 
 	odomCo.addMotion(target);
 
-	std::cout << "odomCo coordinate : (" << odomCo.x << ", " << odomCo.y << ", " << odomCo.th << std::endl;
+	// std::cout << "odomCo coordinate : (" << odomCo.x << ", " << odomCo.y << ", " << odomCo.th << std::endl;
 	// std::cout << "target coordinate : (" << target.x << ", " << target.y << ", " << target.th << std::endl;
 	// std::cout << "Robot coordinate : (" << odomPt.robot.x << ", " << odomPt.robot.y << ", " << odomPt.robot.th << std::endl;
 	
