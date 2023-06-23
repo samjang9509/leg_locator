@@ -278,8 +278,7 @@ void leg_locator::catch_target(std::vector<cv::Point2f> &_laser_pt, std::vector<
 				target_mean.y = target_sum.y / body_size;
 
 				int laser_data_num = leg_target[i].body.size();
-
-
+ 
 				if(target_mean.x > 1000.0f && target_mean.x < 2000.0f && abs(target_mean.y) < 300.0f)
 				{
 					target_id = leg_target[i].label;
@@ -345,11 +344,7 @@ void leg_locator::target_odom(cv::Point2f final_target)
 	target = laser2Odom(final_target, odomPt);
 
 	odomCo.addMotion(target);
-
-	// std::cout << "odomCo coordinate : (" << odomCo.x << ", " << odomCo.y << ", " << odomCo.th << std::endl;
-	// std::cout << "target coordinate : (" << target.x << ", " << target.y << ", " << target.th << std::endl;
-	// std::cout << "Robot coordinate : (" << odomPt.robot.x << ", " << odomPt.robot.y << ", " << odomPt.robot.th << std::endl;
-	
+ 
 	Control.final_target = target;
 	vizual.abs_target = target;
 }

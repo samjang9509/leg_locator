@@ -20,7 +20,7 @@ double motion_control::velocity(float distance)
 
     double tmp_x;
 
-    tmp_x = (pow((double)distance - 0.3, 2)) / 5;
+    tmp_x = (pow((double)(distance / 1000.0 ), 2)) / 5;
 
     output = std::exp(tmp_x) / (5 * std::sqrt(2 * M_PI));
 
@@ -59,7 +59,7 @@ void motion_control::move2target(cv::Point2f p_target)
             vel_pub.linear.y = 0.0;
             if(abs(angle) > 0.1)
             {
-                vel_pub.angular.z = angle / 2.0;
+                vel_pub.angular.z = angle / 1.5;
             }
             else
             {
@@ -76,31 +76,40 @@ void motion_control::move2target(cv::Point2f p_target)
         else
         {
             // std::cout << angle << std::endl;
-
+            // std::cout << "target coordinate :" << target << std::endl;
             if (angle < 0 && target.x < 0)
-            {
+            { 
+                // std::cout << "Scenario 1" << std::endl;
+                // std::cout << velocity(target.x) << ", " << velocity(target.y) << std::endl;
                 vel_pub.linear.x = std::max(-velocity(target.x), -min_lin_vel);
                 vel_pub.linear.y = std::max(-velocity(target.y), -min_lin_vel);
-                vel_pub.angular.z = std::min(-angle/1.3, min_ang_vel);
+                vel_pub.angular.z = std::max(angle/0.5, -min_ang_vel);
             }
             else if(angle < 0 && target.x > 0)
             {
+                // std::cout << "Scenario 2" << std::endl;
+                // std::cout << velocity(target.x) << ", " << velocity(target.y) << std::endl;
                 vel_pub.linear.x = std::min(velocity(target.x), min_lin_vel);
                 vel_pub.linear.y = std::max(-velocity(target.y), -min_lin_vel);
-                vel_pub.angular.z = std::min(-angle/1.3, min_ang_vel);
+                vel_pub.angular.z = std::max(angle/0.5, -min_ang_vel);
             }
             else if(angle > 0 && target.x < 0)
             {
+                // std::cout << "Scenario 3" << std::endl;
+                // std::cout << velocity(target.x) << ", " << velocity(target.y) << std::endl;
                 vel_pub.linear.x = std::max(-velocity(target.x), -min_lin_vel);
                 vel_pub.linear.y = std::min(velocity(target.y), min_lin_vel);
-                vel_pub.angular.z = std::max(-angle/1.3, -min_ang_vel);
+                vel_pub.angular.z = std::min(angle/0.5, min_ang_vel);
             }
             else if(angle > 0 && target.x > 0)
             {
+                // std::cout << "Scenario 4" << std::endl;
+                // std::cout << velocity(target.x) << ", " << velocity(target.y) << std::endl;
                 vel_pub.linear.x = std::min(velocity(target.x), min_lin_vel);
                 vel_pub.linear.y = std::min(velocity(target.y), min_lin_vel);
-                vel_pub.angular.z = std::max(-angle/1.3, -min_ang_vel);
+                vel_pub.angular.z = std::min(angle/0.5, min_ang_vel);
             }
+            // std::cout << "vel_pub : " << vel_pub.linear.x << ", " << vel_pub.linear.y << std::endl;
         }
     }
     catch (const std::exception &e)
