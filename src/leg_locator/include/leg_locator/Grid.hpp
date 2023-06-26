@@ -25,6 +25,7 @@ public:
 	Odom tmp_target;
 	Odom abs_laser_points;
 	Odom abs_target;
+	Odom init_robot_coor;
 
 	int grid_id;
 

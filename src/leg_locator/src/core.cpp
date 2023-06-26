@@ -267,7 +267,8 @@ void leg_locator::catch_target(std::vector<cv::Point2f> &_laser_pt, std::vector<
 	else
 	{
 		if(!initialized)
-		{
+		{	
+			vizual.odomPt.robot = odomPt.robot;
 			vizual.initGrid(grid_laser);
 			for (int i = 0; i < cluster_num; i++)
 			{

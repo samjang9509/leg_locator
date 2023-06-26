@@ -104,6 +104,18 @@ public:
 
 		return Odom(output.x, output.y, th);
 	}
+	cv::Point2f absol2cv(double x, double y, double th, double col_center, double row_center, double mm2grid)
+	{
+		robot_mtx.lock();
+		Odom motion = robot.getMotion(Odom(x, y, th));
+		robot_mtx.unlock();
+
+		cv::Point2f output(
+			col_center - motion.y * mm2grid,
+			row_center - motion.x * mm2grid);
+
+		return output;
+	}
 	nav_msgs::Odometry robot2ros(Odom input)
 	{
 		nav_msgs::Odometry output;
