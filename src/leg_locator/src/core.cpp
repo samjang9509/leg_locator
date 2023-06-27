@@ -41,7 +41,7 @@ void leg_locator::scan_CB(const sensor_msgs::LaserScan::ConstPtr &msg)
 		cv::Point2f tmp_pt;
 		tmp_pt.x = 1000.0f * reprj_p.getX();
 		tmp_pt.y = 1000.0f * reprj_p.getY();
-
+		
 		point_m.push_back(tmp_pt);
 		dst_v = point_m;
 	}
@@ -342,10 +342,7 @@ void leg_locator::target_odom(cv::Point2f final_target)
 {
 	Odom target;
  
-	target = laser2Odom(final_target, odomPt);
-
-	odomCo.addMotion(target);
- 
+	target = laser2Odom(final_target, odomPt);	 
 	Control.final_target = target;
 	vizual.abs_target = target;
 }

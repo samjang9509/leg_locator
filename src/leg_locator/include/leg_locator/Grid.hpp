@@ -5,14 +5,13 @@
 
 #define RAD2DEG(x) ((x)*180. / M_PI)
 #define DEG2RAD(x) ((x)*M_PI / 180.)
-
 class Grid_map
 {
 private:
 	ros::NodeHandle nh_;
 	cv::Point2f robot;
 	std::vector<std::pair<int,cv::Point2f>> points_vector;
-	
+	double d2r = 3.141592 / 180.0f;
 
 public:
 	std::string this_name;
@@ -31,7 +30,7 @@ public:
 
 	float grid_robot_col = 500.0f;
 	float grid_robot_row = 500.0f;
-	float mm2pixel = 100.0f / 1000.0f;
+	float mm2pixel = 100.0f / 1500.0f;
 
 	int grid_row = 1000;
 	int grid_col = 1000;
