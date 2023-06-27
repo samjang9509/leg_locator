@@ -29,7 +29,8 @@ void Grid_map::segGrid(std::vector<cv::Point2f> &_laser_pt, std::vector<std::pai
 		cv::Point2f grid_target;
 		cv::Point2f tmp_grid_target(0.0f, 0.0f);
 		cv::Point2f init_point(0.0f, 0.0f);
-		cv::Point2f robot_tf(0.0f, 0.0f);
+		cv::Point2f robot_tf_x(0.0f, 0.0f);
+		cv::Point2f robot_tf_y(0.0f, 0.0f);
 		
 		// Robot to pixel
 		cv::Rect robot;
@@ -53,14 +54,18 @@ void Grid_map::segGrid(std::vector<cv::Point2f> &_laser_pt, std::vector<std::pai
 
 
 		// std::cout << "robot theta = " << odomPt.robot.th << std::endl;
-		robot_tf.x  = ((100) * cos(base_radian_th) - (100) * sin(base_radian_th));
-		robot_tf.y  = ((100) * sin(base_radian_th) + (100) * cos(base_radian_th));
-		std::cout << "robot_tf : " << robot_tf << std::endl;
-		robot_tf.x = grid_robot_col - (robot_tf.y * mm2pixel);
-		robot_tf.y = grid_robot_row - (robot_tf.x * mm2pixel);
-		std::cout << "robot_tf pixel : " << robot_tf << std::endl;
-		cv::line(odom_grid, cv::Point(grid_robot_col, grid_robot_row), cv::Point(robot_tf.x, robot_tf.y), cv::Scalar(0, 255, 0), 1, cv::LINE_AA);
-		// cv::line(odom_grid, cv::Point(grid_robot_col, grid_robot_row), cv::Point(grid_robot_col, ), cv::Scalar(0, 0, 255), 1, cv::LINE_AA);
+		robot_tf_x.x  = (100 * cos(base_radian_th)) - (0 * sin(base_radian_th));
+		robot_tf_x.y  = (100 * sin(base_radian_th)) + (0 * cos(base_radian_th));
+		robot_tf_x.x = grid_robot_col - (robot_tf_x.y * mm2pixel);
+		robot_tf_x.y = grid_robot_row - (robot_tf_x.x * mm2pixel);
+
+		robot_tf_y.x = (0 * cos(base_radian_th)) - (100 * sin(base_radian_th));
+		robot_tf_y.y = (0 * sin(base_radian_th)) + (100 * cos(base_radian_th));
+		robot_tf_y.x = grid_robot_col - (robot_tf_y.y * mm2pixel);
+		robot_tf_y.y = grid_robot_row - (robot_tf_y.x * mm2pixel);
+
+		cv::line(odom_grid, cv::Point(grid_robot_col, grid_robot_row), cv::Point(robot_tf_x.x, robot_tf_x.y), cv::Scalar(0, 255, 0), 1, cv::LINE_AA);
+		cv::line(odom_grid, cv::Point(grid_robot_col, grid_robot_row), cv::Point(robot_tf_y.x, robot_tf_y.y), cv::Scalar(0, 0, 255), 1, cv::LINE_AA);
 
 		for (int i = 0; i < laser_size; i++)
 		{

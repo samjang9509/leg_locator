@@ -9,7 +9,7 @@ class Grid_map
 {
 private:
 	ros::NodeHandle nh_;
-	cv::Point2f robot;
+	cv::Point2f grid_mid;
 	std::vector<std::pair<int,cv::Point2f>> points_vector;
 	double d2r = 3.141592 / 180.0f;
 
@@ -45,7 +45,7 @@ public:
 
     cv::Point2f pt2Grid(float x_co, float y_co);
 public:
-	Grid_map() : this_name("Grid_map"), vizualizer(true), robot(grid_robot_row, grid_robot_col)
+	Grid_map() : this_name("Grid_map"), vizualizer(true), grid_mid(grid_robot_row, grid_robot_col)
 	{
 		odom_grid = cv::Mat(grid_row, grid_col, CV_8UC3, cv::Scalar(0, 0, 0));
 		seg_grid = cv::Mat(grid_row, grid_col, CV_8UC3, cv::Scalar(0, 0, 0));
