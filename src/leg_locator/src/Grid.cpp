@@ -2,8 +2,8 @@
 
 void Grid_map::segGrid(std::vector<cv::Point2f> &_laser_pt, std::vector<std::pair<int, cv::Point2f>> &grid)
 {
-	seg_grid.setTo(125);
-	odom_grid.setTo(125);
+	seg_grid.setTo(130);
+	odom_grid.setTo(130);
 
 	if (vizualizer)
 	{
@@ -11,9 +11,6 @@ void Grid_map::segGrid(std::vector<cv::Point2f> &_laser_pt, std::vector<std::pai
 		int clusterSize;
 		int actual_label = 0;
 
-		cv::line(seg_grid, cv::Point(grid_robot_col, 0), cv::Point(grid_robot_col, (grid_robot_col * 2)), cv::Scalar(0, 0, 255), 1, cv::LINE_AA);
-		cv::line(seg_grid, cv::Point(0, (grid_robot_col)), cv::Point((grid_robot_col * 2), grid_robot_col), cv::Scalar(0, 0, 255), 1, cv::LINE_AA);
-		cv::circle(seg_grid, cv::Point2f(grid_robot_col, grid_robot_row), 4, cv::Scalar(0, 0, 255), -1);
 
 		
 		int point_size = grid.size();
@@ -32,18 +29,23 @@ void Grid_map::segGrid(std::vector<cv::Point2f> &_laser_pt, std::vector<std::pai
 		cv::Point2f robot_tf_x(0.0f, 0.0f);
 		cv::Point2f robot_tf_y(0.0f, 0.0f);
 		
+		cv::line(seg_grid, cv::Point(grid_robot_col, 0), cv::Point(grid_robot_col, (grid_robot_col * 2)), cv::Scalar(0, 0, 255), 1, cv::LINE_AA);
+		cv::line(seg_grid, cv::Point(0, (grid_robot_col)), cv::Point((grid_robot_col * 2), grid_robot_col), cv::Scalar(0, 0, 255), 1, cv::LINE_AA);
+		cv::circle(seg_grid, cv::Point2f(grid_robot_col, grid_robot_row), 4, cv::Scalar(0, 0, 255), -1);
+		
 		// Robot to pixel
 		cv::Rect robot;
 		robot.x = (grid_robot_col - 20);
 		robot.y = (grid_robot_row - 20);
 		robot.width = 40;
 		robot.height = 40;
-		cv::rectangle(odom_grid, robot, cv::Scalar(0,255,0), 2);
+		cv::rectangle(odom_grid, robot, cv::Scalar(255,0,0), 2);
 		points_vector.resize(point_size);
+		// 
 
 		// Initial point
-		init_point.x = grid_robot_col - ((init_robot_coor.x - odomPt.robot.x) * mm2pixel); 
-		init_point.y = grid_robot_row - ((init_robot_coor.y - odomPt.robot.y) * mm2pixel); 
+		init_point.x = grid_robot_col - ((init_robot_coor.y - odomPt.robot.y) * mm2pixel); 
+		init_point.y = grid_robot_row - ((init_robot_coor.x - odomPt.robot.x) * mm2pixel); 
 		
 
 		points_vector = grid;
@@ -51,21 +53,22 @@ void Grid_map::segGrid(std::vector<cv::Point2f> &_laser_pt, std::vector<std::pai
 		cv::line(odom_grid, cv::Point(init_point.x, 0), cv::Point(init_point.x, grid_row), cv::Scalar(0, 0, 255), 1, cv::LINE_AA);
 		cv::line(odom_grid, cv::Point(0, init_point.y), cv::Point(grid_col, init_point.y), cv::Scalar(0, 0, 255), 1, cv::LINE_AA);
 		cv::circle(odom_grid, init_point, 4, cv::Scalar(0, 0, 255), -1);
+		// 
 
+		// axis
+		cv::Point2f axis_x(500.0f, 0.0f);
+		cv::Point2f axis_y(0.0f, 500.0f);
+		tmp_axis = laser2Odom(axis_x, odomPt);
+		robot_tf_y.x = grid_robot_col - ((tmp_axis.y - odomPt.robot.y) * mm2pixel);
+		robot_tf_y.y = grid_robot_row - ((tmp_axis.x - odomPt.robot.x) * mm2pixel);
 
-		// std::cout << "robot theta = " << odomPt.robot.th << std::endl;
-		robot_tf_x.x  = (100 * cos(base_radian_th)) - (0 * sin(base_radian_th));
-		robot_tf_x.y  = (100 * sin(base_radian_th)) + (0 * cos(base_radian_th));
-		robot_tf_x.x = grid_robot_col - (robot_tf_x.y * mm2pixel);
-		robot_tf_x.y = grid_robot_row - (robot_tf_x.x * mm2pixel);
-
-		robot_tf_y.x = (0 * cos(base_radian_th)) - (100 * sin(base_radian_th));
-		robot_tf_y.y = (0 * sin(base_radian_th)) + (100 * cos(base_radian_th));
-		robot_tf_y.x = grid_robot_col - (robot_tf_y.y * mm2pixel);
-		robot_tf_y.y = grid_robot_row - (robot_tf_y.x * mm2pixel);
+		tmp_axis = laser2Odom(axis_y, odomPt);
+		robot_tf_x.x = grid_robot_col - ((tmp_axis.y - odomPt.robot.y) * mm2pixel);
+		robot_tf_x.y = grid_robot_row - ((tmp_axis.x - odomPt.robot.x) * mm2pixel);
 
 		cv::line(odom_grid, cv::Point(grid_robot_col, grid_robot_row), cv::Point(robot_tf_x.x, robot_tf_x.y), cv::Scalar(0, 255, 0), 1, cv::LINE_AA);
 		cv::line(odom_grid, cv::Point(grid_robot_col, grid_robot_row), cv::Point(robot_tf_y.x, robot_tf_y.y), cv::Scalar(0, 0, 255), 1, cv::LINE_AA);
+		// 
 
 		for (int i = 0; i < laser_size; i++)
 		{
@@ -74,9 +77,9 @@ void Grid_map::segGrid(std::vector<cv::Point2f> &_laser_pt, std::vector<std::pai
 			points.x = -(_laser_pt[i].y * mm2pixel) + grid_robot_col;
 			points.y = -(_laser_pt[i].x * mm2pixel) + grid_robot_row;
 			cv::circle(seg_grid, points, 2, cv::Scalar(0, 0, 0), -1);
-			tmp_target = laser2Odom(_laser_pt[i], odomPt);
-			laser_Opoints.x = grid_robot_col - ((tmp_target.x - odomPt.robot.x) * mm2pixel);
-			laser_Opoints.y = grid_robot_row - ((tmp_target.y - odomPt.robot.y) * mm2pixel);
+			abs_laser_points = laser2Odom(_laser_pt[i], odomPt);
+			laser_Opoints.x = grid_robot_col - ((abs_laser_points.y - odomPt.robot.y) * mm2pixel);
+			laser_Opoints.y = grid_robot_row - ((abs_laser_points.x - odomPt.robot.x) * mm2pixel);
 			cv::circle(odom_grid, laser_Opoints, 2, cv::Scalar(0, 0, 0), -1);
 		}
 		
@@ -88,6 +91,7 @@ void Grid_map::segGrid(std::vector<cv::Point2f> &_laser_pt, std::vector<std::pai
 
 		std::sort(points_vector.begin(), points_vector.end(), [&](std::pair<int, cv::Point2f> a, std::pair<int, cv::Point2f> b)
 				  { return a.first < b.first; });
+		
 
 		check_id = points_vector[0].first;
 
@@ -212,7 +216,6 @@ cv::Point2f Grid_map::pt2Grid(float x_co, float y_co)
 
 Odom Grid_map::laser2Odom(cv::Point2f laser_pt, OdoManager &odomPoint)
 {
-
 	double base_radian_th = odomPoint.robot.th * d2r;
 
 	Odom output;

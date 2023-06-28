@@ -21,7 +21,7 @@ public:
 
     OdoManager odomPt;
 
-	Odom tmp_target;
+	Odom tmp_axis;
 	Odom abs_laser_points;
 	Odom abs_target;
 	Odom init_robot_coor;
@@ -30,7 +30,7 @@ public:
 
 	float grid_robot_col = 500.0f;
 	float grid_robot_row = 500.0f;
-	float mm2pixel = 100.0f / 1500.0f;
+	float mm2pixel = 100.0f / 2000.0f;
 
 	int grid_row = 1000;
 	int grid_col = 1000;
