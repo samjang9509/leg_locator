@@ -300,22 +300,22 @@ void leg_locator::catch_target(std::vector<cv::Point2f> &_laser_pt, std::vector<
 			for (int i = 0; i < cluster_num; i++)
 			{
 				// Control.target_track = false;
-				cv::Point2f target_sum = std::accumulate(leg_target[i].body.begin(), leg_target[i].body.end(), zero);
-				int body_size = leg_target[i].body.size();
+				cv::Point2f target_sum = std::accumulate(tmp_leg_target[i].body.begin(), tmp_leg_target[i].body.end(), zero);
+				int body_size = tmp_leg_target[i].body.size();
 
 				target_mean.x = target_sum.x / body_size;
 				target_mean.y = target_sum.y / body_size;
 
-				int laser_data_num = leg_target[i].body.size();
+				int laser_data_num = tmp_leg_target[i].body.size();
 				// grid.resize(laser_data_num * cluster_num);
 				for (int j = 0; j < laser_data_num; j++)
 				{
-					tmp_grid.second = leg_target[i].body[j];
-					tmp_grid.first = leg_target[i].label;
+					tmp_grid.second = tmp_leg_target[i].body[j];
+					tmp_grid.first = tmp_leg_target[i].label;
 
 					grid.push_back(tmp_grid);
 
-					if(target_id == leg_target[i].label)
+					if(target_id == tmp_leg_target[i].label)
 					{
 						final_target = target_mean;
 						target_odom(final_target);
