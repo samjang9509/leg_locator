@@ -12,6 +12,7 @@
 
 #include <sensor_msgs/LaserScan.h>
 #include <geometry_msgs/Twist.h>
+#include <geometry_msgs/Point.h>
 #include <nav_msgs/Odometry.h>
 #include <numeric>
 #include <algorithm>

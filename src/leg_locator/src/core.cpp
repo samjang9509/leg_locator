@@ -194,6 +194,20 @@ std::vector<std::pair<int, cv::Point2f>> leg_locator::initialize_leg()
 // 	point_m.clear();
 // }
 
+void leg_locator::init_publisher()
+{
+	target_pub = nh.advertise<geometry_msgs::Point>("leg_target", 10);
+}
+
+
+void leg_locator::publisher(cv::Point2f target_coordinate)
+{
+	geometry_msgs::Point output;
+	output.x = target_coordinate.x;
+	output.y = target_coordinate.y;
+	
+	target_pub.publish(output);
+}
 
 void leg_locator::segmentation(std::vector<cv::Point2f> &_laser_pt, std::vector<std::pair<int, cv::Point2f>> &_leg_pt)
 {
@@ -249,6 +263,7 @@ void leg_locator::segmentation(std::vector<cv::Point2f> &_laser_pt, std::vector<
 void leg_locator::catch_target(std::vector<cv::Point2f> &_laser_pt, std::vector<Cluster> leg_target)
 {	std::pair<int,cv::Point2f> tmp_grid;
 	std::vector<cv::Point2f> grid_laser;
+	std::vector<Cluster> tmp_leg_target;
 	std::vector<std::pair<int,cv::Point2f>> grid;
 	int cluster_num = leg_target.size();
 	cv::Point2f zero(0.0f, 0.0f);
@@ -260,6 +275,11 @@ void leg_locator::catch_target(std::vector<cv::Point2f> &_laser_pt, std::vector<
 	_laser_pt.swap(grid_laser);
 	l_mutex.unlock();
 
+	l_mutex.lock();
+	leg_target.swap(tmp_leg_target);
+	l_mutex.unlock();
+
+
 	if(cluster_num == 0)
 	{
 		ROS_INFO("No incoming body");	
@@ -267,33 +287,10 @@ void leg_locator::catch_target(std::vector<cv::Point2f> &_laser_pt, std::vector<
 	else
 	{
 		if(!initialized)
-		{	
+		{
 			vizual.odomPt.robot = odomPt.robot;
 			vizual.initGrid(grid_laser);
-			for (int i = 0; i < cluster_num; i++)
-			{
-				cv::Point2f target_sum = std::accumulate(leg_target[i].body.begin(), leg_target[i].body.end(), zero);
-				int body_size = leg_target[i].body.size();
-
-				target_mean.x = target_sum.x / body_size;
-				target_mean.y = target_sum.y / body_size;
-
-				int laser_data_num = leg_target[i].body.size();
- 
-				if(target_mean.x > 1000.0f && target_mean.x < 2000.0f && abs(target_mean.y) < 300.0f)
-				{
-					target_id = leg_target[i].label;
-					vizual.grid_id = leg_target[i].label;
-					std::cout << "Caught target id :" << target_id << std::endl;
-					initialized = true;
-					cv::destroyWindow("initial_map");
-				}
-				else
-				{
-					ROS_INFO("No suitable Candidate");
-					continue;
-				}
-			}
+			initialize_target(grid_laser, tmp_leg_target);
 		}
 		else
 		{
@@ -322,6 +319,7 @@ void leg_locator::catch_target(std::vector<cv::Point2f> &_laser_pt, std::vector<
 					{
 						final_target = target_mean;
 						target_odom(final_target);
+						publisher(final_target);
 						// Control.target_track = true;
 					}
 					else
@@ -329,11 +327,42 @@ void leg_locator::catch_target(std::vector<cv::Point2f> &_laser_pt, std::vector<
 						continue;
 					}
 				}
-				// std::cout << "final target coordinate : " << final_target << std::endl;
 			}
 			Control.move2target(final_target);
 			vizual.segGrid(grid_laser, grid);
 			grid.clear();
+		}
+	}
+}
+
+void leg_locator::initialize_target(std::vector<cv::Point2f> &_laser_pt, std::vector<Cluster> leg_target)
+{
+	int cluster_num = leg_target.size();
+	cv::Point2f target_mean;
+	cv::Point2f zero(0.0f, 0.0f);
+
+	for (int i = 0; i < cluster_num; i++)
+	{
+		cv::Point2f target_sum = std::accumulate(leg_target[i].body.begin(), leg_target[i].body.end(), zero);
+		int body_size = leg_target[i].body.size();
+
+		target_mean.x = target_sum.x / body_size;
+		target_mean.y = target_sum.y / body_size;
+
+		int laser_data_num = leg_target[i].body.size();
+
+		if (target_mean.x > 1000.0f && target_mean.x < 2000.0f && abs(target_mean.y) < 300.0f)
+		{
+			target_id = leg_target[i].label;
+			vizual.grid_id = leg_target[i].label;
+			std::cout << "Caught target id :" << target_id << std::endl;
+			initialized = true;
+			cv::destroyWindow("initial_map");
+		}
+		else
+		{
+			ROS_INFO("No suitable Candidate");
+			continue;
 		}
 	}
 }

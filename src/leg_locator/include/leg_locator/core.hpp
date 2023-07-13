@@ -37,6 +37,7 @@ public:
     ros::Subscriber scan_sub;
     ros::Subscriber odom_sub_;
     ros::Subscriber leg_sub;
+    ros::Publisher target_pub;
 
     Odom odomCo;
     OdoManager odomPt;
@@ -84,6 +85,7 @@ private:
     int target_id;
 
     void segmentation(std::vector<cv::Point2f> &_laser_pt, std::vector<std::pair<int, cv::Point2f>> &_leg_pt);
+    void initialize_target(std::vector<cv::Point2f> &_laser_pt, std::vector<Cluster> leg_target);
     void catch_target(std::vector<cv::Point2f> &_laser_pt, std::vector<Cluster> leg_target);
 
     // void sync_callback(const sensor_msgs::LaserScan::ConstPtr &msg, const leg_tracker::PersonArray::ConstPtr &person);
@@ -99,6 +101,8 @@ private:
     void destructor();
     void odom_subscriber();
     void leg_subscriber();
+    void init_publisher();
+    void publisher(cv::Point2f target_coordinate);
 
 public:
     leg_locator() : this_name("leg_locator"), initialized(false), target_id(0)
@@ -106,6 +110,7 @@ public:
     {
         this->odom_subscriber();
         this->leg_subscriber();
+        this->init_publisher();
         this->laserscan_topic_parser();
         this->runloop();
     }
