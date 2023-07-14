@@ -268,7 +268,7 @@ if __name__ == '__main__':
 
         if not args.local:
             # environment at generation time
-            CMAKE_PREFIX_PATH = r'/home/cona/leg_locator/devel;/home/cona/particle/devel;/home/cona/elevator_docking/devel;/home/cona/Following/PF_v4/devel;/home/cona/Following/CoNA_PF_bringUp/devel;/home/cona/Following/cona_msgs/devel;/opt/ros/noetic'.split(';')
+            CMAKE_PREFIX_PATH = r'/home/cona/leg_locator/devel;/home/cona/elevator_docking/devel;/home/cona/Following/PF_v4/devel;/home/cona/Following/CoNA_PF_bringUp/devel;/home/cona/Following/cona_msgs/devel;/opt/ros/noetic'.split(';')
         else:
             # don't consider any other prefix path than this one
             CMAKE_PREFIX_PATH = []

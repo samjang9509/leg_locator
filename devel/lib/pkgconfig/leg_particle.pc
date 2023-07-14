@@ -1,0 +1,8 @@
+prefix=/home/cona/leg_locator/devel
+
+Name: leg_particle
+Description: Description of leg_particle
+Version: 0.0.0
+Cflags: -I/home/cona/leg_locator/src/leg_particle/include
+Libs: -L${prefix}/lib 
+Requires: geometry_msgs roscpp sensor_msgs std_msgs

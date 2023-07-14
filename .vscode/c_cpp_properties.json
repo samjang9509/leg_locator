@@ -4,6 +4,7 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
+                "/home/cona/leg_locator/",
                 "/opt/ros/noetic/include",
                 "/usr/include/opencv4"
             ],

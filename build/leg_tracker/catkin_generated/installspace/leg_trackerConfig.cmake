@@ -154,7 +154,7 @@ foreach(library ${libraries})
     set(lib_path "")
     set(lib "${library}-NOTFOUND")
     # since the path where the library is found is returned we have to iterate over the paths manually
-    foreach(path /home/cona/leg_locator/install/lib;/home/cona/leg_locator/devel/lib;/home/cona/particle/devel/lib;/home/cona/elevator_docking/devel/lib;/home/cona/Following/PF_v4/devel/lib;/home/cona/Following/CoNA_PF_bringUp/devel/lib;/home/cona/Following/cona_msgs/devel/lib;/opt/ros/noetic/lib)
+    foreach(path /home/cona/leg_locator/install/lib;/home/cona/leg_locator/devel/lib;/home/cona/elevator_docking/devel/lib;/home/cona/Following/PF_v4/devel/lib;/home/cona/Following/CoNA_PF_bringUp/devel/lib;/home/cona/Following/cona_msgs/devel/lib;/opt/ros/noetic/lib)
       find_library(lib ${library}
         PATHS ${path}
         NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)

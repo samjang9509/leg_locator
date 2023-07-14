@@ -131,6 +131,7 @@ endif()
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
   include("/home/cona/leg_locator/build/gtest/cmake_install.cmake")
+  include("/home/cona/leg_locator/build/leg_particle/cmake_install.cmake")
   include("/home/cona/leg_locator/build/leg_tracker/cmake_install.cmake")
   include("/home/cona/leg_locator/build/leg_locator/cmake_install.cmake")
 
