@@ -138,9 +138,6 @@ void Particle::resampling(std::vector<Particles> &smp_particle)
 
 				if (checkWeight <= weightSum)
 				{
-					std::cout << "weight sum for " << j << " = " << weightSum << std::endl;
-					std::cout << "PARTICLE WEIGHT " << j << " = " << smp_particle[j].weight << std::endl;
-					std::cout << "PARTICLE WEIGHT " << j - 1 << " = " << smp_particle[j - 1].weight << std::endl;
 					p.id = j;
 					p.x = smp_particle[j].x;
 					p.y = smp_particle[j].y;
@@ -161,7 +158,6 @@ void Particle::resampling(std::vector<Particles> &smp_particle)
 			p.y = smp_particle[i].y + gaussian_random(gen);
 			p.theta = smp_particle[i].theta;
 			p.weight = 1.0 / size;
-			// p.weight = 0.0;
 			parts[i] = p;
 			weights[i] = p.weight;
 		}

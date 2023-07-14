@@ -1,6 +1,8 @@
 #ifndef receive
 #define receive
 
+#include "leg_particle/system.hpp"
+
 class receiver
 {
 public:

@@ -410,7 +410,7 @@ void leg_locator::runloop()
         ros::Rate hz(10);
         while(ros::ok()){
             src_laser = std::move(initialize_scan());
-			src_person = std::move(initialize_leg()s);
+			src_person = std::move(initialize_leg());
 
 				segmentation(src_laser, src_person);
 

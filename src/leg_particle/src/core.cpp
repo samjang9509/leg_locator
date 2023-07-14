@@ -5,7 +5,7 @@ void core::laser_callback()
 	laser_sub = nh_.subscribe<sensor_msgs::LaserScan>("/scan_multi", 1, &core::scan_callback, this);
 }
 
-std::vector<cv::Point2f> core::init_laser()
+std::vector<cv::Point2f> core::init_laser() 
 {
 	l_tmp_point.clear();
 	return l_point;
@@ -16,17 +16,16 @@ void core::scan_callback(const sensor_msgs::LaserScan::ConstPtr &msg)
 	mutex.lock();
 	l_receiver.get_tf(msg->header.frame_id);
 
-	int size = std::min((int)msg->ranges.size(), 1440); // TG = 2019, Sick
+	int size = std::min((int)msg->ranges.size(), 1440);
 	float angle_min = msg->angle_min;
 	float angle_max = msg->angle_max;
 	float angle_increment = msg->angle_increment;
 	float range_min = (float)msg->range_min;
 	float range_max = (float)msg->range_max;
 
-	// for every data within the size
 	for (int i = 0; i < size; i++)
 	{
-		float val = msg->ranges[i]; // ranges[i]?
+		float val = msg->ranges[i];
 		if (val <= range_min || val >= range_max || !std::isfinite(val) || val == 0.0)
 			continue;
 		float angle = angle_min + angle_increment * (float)i; 
@@ -60,7 +59,7 @@ void core::runloop()
             ros::spinOnce();
             hz.sleep();
         }
-    })))
+    })));
 };
 
 void core::destructor()

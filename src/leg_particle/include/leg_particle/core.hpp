@@ -3,11 +3,13 @@
 
 class core
 {
-    ros::nodeHandle nh_;
+    private:
+    
+    ros::NodeHandle nh_;
     ros::Subscriber laser_sub;
-    receiver l_receiver;
     std::mutex mutex;
     std::deque<std::thread> thread_list;
+    receiver l_receiver;
 
     void scan_callback(const sensor_msgs::LaserScan::ConstPtr &msg);
     void runloop();
@@ -19,11 +21,11 @@ class core
     void laser_callback();
 
 
-    core():
+    core()
     {
-
+        this->runloop();
     }
-    ~core():
+    ~core()
     {
 
     }
