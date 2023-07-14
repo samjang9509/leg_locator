@@ -329,7 +329,6 @@ void leg_locator::catch_target(std::vector<cv::Point2f> &_laser_pt, std::vector<
 					}
 				}
 			}
-			std::cout << tracking << std::endl;
 			Control.move2target(final_target);
 			vizual.segGrid(grid_laser, grid);
 			grid.clear();
@@ -411,7 +410,7 @@ void leg_locator::runloop()
         ros::Rate hz(10);
         while(ros::ok()){
             src_laser = std::move(initialize_scan());
-			src_person = std::move(initialize_leg());
+			src_person = std::move(initialize_leg()s);
 
 				segmentation(src_laser, src_person);
 
