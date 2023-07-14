@@ -359,6 +359,7 @@ void leg_locator::initialize_target(std::vector<cv::Point2f> &_laser_pt, std::ve
 			vizual.grid_id = leg_target[i].label;
 			std::cout << "Caught target id :" << target_id << std::endl;
 			initialized = true;
+			tracking = true;
 			cv::destroyWindow("initial_map");
 		}
 		else
