@@ -82,6 +82,7 @@ private:
     float inline euclidean_distance(cv::Point2f target);
 
     bool initialized;
+    bool tracking;
     int target_id;
 
     void segmentation(std::vector<cv::Point2f> &_laser_pt, std::vector<std::pair<int, cv::Point2f>> &_leg_pt);
@@ -105,7 +106,7 @@ private:
     void publisher(cv::Point2f target_coordinate);
 
 public:
-    leg_locator() : this_name("leg_locator"), initialized(false), target_id(0)
+    leg_locator() : this_name("leg_locator"), initialized(false), target_id(0), tracking(false)
     //laser_sub(nh, "/scan_multi", 1), person_sub(nh, "/people_tracked", 1), sync(MySyncPolicy(10), laser_sub, person_sub)
     {
         this->odom_subscriber();
